@@ -1,5 +1,3 @@
-
-// launcher.js
 function findIconPath(iconName) {
   // Icon theme search paths
   const ICON_PATHS = [
@@ -141,5 +139,3 @@ export function prepareAppsMenu() {
 
   return appMenu;
 }
-
-
