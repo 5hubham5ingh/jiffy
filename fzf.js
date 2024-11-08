@@ -9,6 +9,7 @@ import { ProcessSync } from "../qjs-ext-lib/src/process.js";
  * @returns {Object | undefined} The selected item from the list or undefined if no selection was made.
  */
 export function fzf(list) {
+  if (!list) throw list;
   // Get the terminal window size (width and height) for formatting purposes
   const [width, height] = OS.ttyGetWinSize();
 

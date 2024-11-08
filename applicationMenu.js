@@ -107,7 +107,7 @@ export function prepareAppsMenu() {
       } else if (line.startsWith("Exec=")) {
         currApp.exec = line.split("=")[1].split("/").reduce(
           (_, execCmd) => execCmd.split(" ")[0],
-          _,
+          null,
         );
       } else if (line.startsWith("Icon=")) {
         const iconName = line.split("=")[1];
@@ -137,5 +137,5 @@ export function prepareAppsMenu() {
     }
   }
 
-  return appMenu;
+  return { Apps: appMenu };
 }

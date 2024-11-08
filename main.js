@@ -2,6 +2,7 @@ import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
 import { notify } from "../justjs/utils.js";
 import { fzf } from "./fzf.js";
+import { getMenu } from "./menu.js";
 
 //TODO: remove this from code and make it injection that runs on start
 // OS.exec(["kitty", "@", "set-spacing", "margin=0"]);
@@ -25,7 +26,7 @@ async function main() {
   };
 
   // Call the `app` function to start the application logic
-  await app();
+  await app(USER_ARGUMENTS.mode);
 }
 
 /**
@@ -46,11 +47,13 @@ function parseUserArguments() {
 
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str().enum(["Apps"]).desc(
+    [args.mode]: arg.str("Apps").enum(["Apps"]).desc(
       "Set the mode of commands from modes predefined in the config file.",
     ),
     [args.iconSize]: arg.num(5).min(0).desc("App's icon cell size."),
-    [args.preset]: arg.num().enum([1, 2, 3, 4]).desc("Start with UI preset."),
+    [args.preset]: arg.str().enum(["1", "2", "3", "4"]).desc(
+      "Start with UI preset.",
+    ),
     [args.fzfArgs]: arg.str().desc("Custom arguments for fzf."),
     [args.cache]: arg.flag(true).desc("Cache the application list."),
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(
@@ -59,7 +62,8 @@ function parseUserArguments() {
     "-s": args.iconSize, // Short form for --icon-size
     "-p": args.preset, // Short form for --preset
     "-i": args.inject, // Short form for --inject
-  });
+  })
+    .parse();
 
   // Convert the parsed arguments into an object and return it
   return Object.fromEntries(
@@ -81,6 +85,7 @@ async function app(menuName) {
 
   // Use fuzzy finder (fzf) to select the desired app from the menu
   const selectedApp = fzf(appMenu[menuName]);
+  if (!selectedApp) return;
 
   // Initialize an array to hold the command that will be executed
   const execCmd = [];
