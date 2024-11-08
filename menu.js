@@ -1,29 +1,25 @@
 import { ensureDir } from "../justjs/utils.js";
 import { prepareAppsMenu } from "./applicationMenu.js";
 
-// Declare a variable `menu` to store the final merged menu data.
-let menu;
-
 /**
  * Retrieves the combined user and application menus.
  * @returns {Object} The merged menu object, including user-specific and application menus.
  */
 export function getMenu() {
-  // Return the cached `menu` if it already exists.
-  if (menu) return menu;
-
   // Merge the user menu and app menu to create the final menu.
-  menu = { ...getUserMenu(), ...getAppMenu() };
+  const menu = { ...getUserMenu(), ...getAppMenu() };
 
   // Return the merged menu.
   return menu;
 }
 
+let userMenu;
 /**
  * Retrieves the user-specific menu from a JSON file located in the user's config directory.
  * @returns {Object} The user menu as an object, or an empty object if no menu is found or there is an error.
  */
 export function getUserMenu() {
+  if (userMenu) return userMenu;
   // Define the path to the user's menu directory.
   const userMenuDirPath = HOME_DIR + "/.config/jiffy/";
 
@@ -40,7 +36,7 @@ export function getUserMenu() {
   if (userMenuFile) {
     try {
       // Parse the user menu JSON content and return it.
-      const userMenu = STD.parseExtJSON(userMenuFile);
+      userMenu = STD.parseExtJSON(userMenuFile);
       return userMenu;
     } catch (_) {
       // If there is an error parsing the menu file, throw a custom error.

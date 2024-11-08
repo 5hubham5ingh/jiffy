@@ -101,7 +101,7 @@ export function prepareAppsMenu() {
 
       // Parse desktop entry fields
       if (line.startsWith("Name=")) {
-        currApp.name = "◉ " + line.split("=")[1];
+        currApp.name = "• " + line.split("=")[1];
       } else if (line.startsWith("Comment=")) {
         currApp.description = line.split("=")[1];
       } else if (line.startsWith("Exec=")) {
