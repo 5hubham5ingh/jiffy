@@ -38,7 +38,7 @@ async function main() {
 /**
  * Parses command-line arguments passed to the script.
  * Defines accepted argument types and provides default values.
- * @returns {Object} An object containing the parsed user arguments.
+ * @returns {import("./types.d.ts").UserArguments} An object containing the parsed user arguments.
  */
 function parseUserArguments() {
   // Define the argument names and their corresponding flags
@@ -120,7 +120,7 @@ async function app(menuName) {
   execCmd.push(selectedApp.exec);
 
   // Execute the command asynchronously and handle any errors
-  await execAsync(execCmd.join(" "), { newSession: true })
+  execAsync(execCmd.join(" "), { newSession: true })
     .catch(async (error) => {
       // If the execution fails, notify the user about the failure
       await notify(
