@@ -23,7 +23,7 @@ export function getMenu() {
  * Retrieves the user-specific menu from a JSON file located in the user's config directory.
  * @returns {Object} The user menu as an object, or an empty object if no menu is found or there is an error.
  */
-function getUserMenu() {
+export function getUserMenu() {
   // Define the path to the user's menu directory.
   const userMenuDirPath = HOME_DIR + "/.config/jiffy/";
 
@@ -40,18 +40,25 @@ function getUserMenu() {
   if (userMenuFile) {
     try {
       // Parse the user menu JSON content and return it.
-      const userMenu = STD.parseExtJSON(userMenuFilePath);
+      const userMenu = STD.parseExtJSON(userMenuFile);
       return userMenu;
-    } catch (error) {
+    } catch (_) {
       // If there is an error parsing the menu file, throw a custom error.
-      throw SystemError(
+      throw new SystemError(
         "Error while parsing menu.jsonc",
-        JSON.stringify(error),
+        `The following extensions to JSON standard are accepted:-
+    - Single line and multiline comments
+    - unquoted properties (ASCII-only Javascript identifiers)
+    - trailing comma in array and object definitions
+    - single quoted strings
+    - \\f and \\v are accepted as space characters
+    - leading plus in numbers
+    - octal (0o prefix) and hexadecimal (0x prefix) numbers `,
       );
     }
-  }
+  } else print("No custom menu found.", userMenuFilePath);
 
-  // Return an empty object if no user menu file is found or if it couldn't be parsed.
+  // Return an empty object if no user menu file is found.
   return {};
 }
 

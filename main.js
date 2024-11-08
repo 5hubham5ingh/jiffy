@@ -2,18 +2,24 @@ import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
 import { notify } from "../justjs/utils.js";
 import { fzf } from "./fzf.js";
-import { getMenu } from "./menu.js";
+import { getMenu, getUserMenu } from "./menu.js";
 
 //TODO: remove this from code and make it injection that runs on start
 // OS.exec(["kitty", "@", "set-spacing", "margin=0"]);
 
-await main();
+try {
+  await main();
+} catch (error) {
+  if (error instanceof SystemError) error.log(true);
+  else throw error;
+}
 
 /**
  * Main function that sets up global arguments, parses user inputs, and calls the app function.
  * @returns {Promise<void>} A promise that resolves when the main process is complete.
  */
 async function main() {
+  const parsedArgs = parseUserArguments();
   /**
    * Define and initialize the global `USER_ARGUMENTS` object. This object will hold user-provided arguments
    * for various configuration options, such as mode, icon size, and custom scripts.
@@ -22,7 +28,7 @@ async function main() {
   globalThis.USER_ARGUMENTS = {
     pLimit: 4, // Default limit for parallel execution
     disableNotification: false, // Default flag to enable notifications
-    ...parseUserArguments(), // Merge parsed user arguments into this object
+    ...parsedArgs, // Merge parsed user arguments into this object
   };
 
   // Call the `app` function to start the application logic
@@ -47,9 +53,10 @@ function parseUserArguments() {
 
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str("Apps").enum(["Apps"]).desc(
-      "Set the mode of commands from modes predefined in the config file.",
-    ),
+    [args.mode]: arg.str("Apps").enum(["Apps", ...Object.keys(getUserMenu())])
+      .desc(
+        "Set the mode of commands from modes predefined in the config file.",
+      ),
     [args.iconSize]: arg.num(5).min(0).desc("App's icon cell size."),
     [args.preset]: arg.str().enum(["1", "2", "3", "4"]).desc(
       "Start with UI preset.",
@@ -99,7 +106,7 @@ async function app(menuName) {
     if (!terminalExec) {
       await notify(
         `Failed to launch '${selectedApp.name}'.`, // Notification title
-        "No TERMINAL found in env var.", // Notification message
+        "No TERMINAL found in env var", // Notification message
         "critical", // Notification type
       );
       return;
