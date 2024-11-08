@@ -101,7 +101,7 @@ export function prepareAppsMenu() {
 
       // Parse desktop entry fields
       if (line.startsWith("Name=")) {
-        currApp.name = line.split("=")[1];
+        currApp.name = "◉ " + line.split("=")[1];
       } else if (line.startsWith("Comment=")) {
         currApp.description = line.split("=")[1];
       } else if (line.startsWith("Exec=")) {
@@ -117,13 +117,14 @@ export function prepareAppsMenu() {
       } else if (line.startsWith("NoDisplay=")) {
         noDisplay = line.split("=")[1].toLowerCase() === "true";
       } else if (line.startsWith("Categories")) {
-        currApp.category = "◉ " +
-          line.split("=")[1]?.split(";").filter((entry) => entry).join(" ◉ ")
-            .trim();
+        currApp.category = line.split("=")[1]?.split(";").filter((entry) =>
+          entry
+        ).join(" │ ")
+          .trim();
       } else if (line.startsWith("Keywords")) {
         currApp.keywords = line.split("=")[1]?.split(";").filter((entry) =>
           entry?.charCodeAt(0) >= 32 && entry?.charCodeAt(0) <= 126
-        ).join(" │ ").trim();
+        ).join(", ").trim();
       }
 
       // Break when all required fields have been acquired.

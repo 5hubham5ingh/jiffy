@@ -36,7 +36,7 @@ export function fzf(list) {
     }` +
     `x1 "$(echo {} | head -n 1 | cut -d'#' -f1)" >>/dev/tty && echo {} | head -n 3 | tail -n 1'`, // Custom info command for displaying icons (using `kitty icat`)
     '--preview="echo {} | head -n 2 | tail -n 1 | column -c 1"', // Preview command to show more details about the selection
-    "--preview-window=down,1%,border-none", // Preview window settings
+    "--preview-window=down,2,wrap,border-top", // Preview window settings
     `--prompt=" "`, // Set the prompt to a space (empty)
     `--marker=""`, // Remove the marker character
     `--pointer=""`, // Remove the pointer symbol
@@ -57,25 +57,19 @@ export function fzf(list) {
   const styledOptions = list.map((option) => ({
     displayName: `${option?.icon ?? ""}\n` // Display the app's icon (if any)
       .concat(
-        (option?.category &&
-          " ".repeat(
-            Math.abs(
-              parseInt(width / 2) - parseInt(option.category.length / 2) - 4,
-            ),
-          )
-            .concat(option.category)) ?? "", // Display the category, centered if available
+        option?.description ?? "", // Display the category, centered if available
         "\n",
       )
-      .concat(option?.keywords ?? "", "\n") // Display the app's keywords
+      .concat(option?.category ?? "", "\n") // Display the app's keywords
       .concat( // Display the app's name and description, with proper formatting
         "#\n",
         option.name + " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
-        option?.description
+        option?.keywords
           ? ` : ${
-            width - maxNameLength - 10 < option.description.length
-              ? option.description.substring(0, width - maxNameLength - 10)
+            width - maxNameLength - 10 < option.keywords.length
+              ? option.keywords.substring(0, width - maxNameLength - 10)
                 .concat("...") // Truncate description if it exceeds available space
-              : option.description
+              : option.keywords
           }`
           : "",
       ),
