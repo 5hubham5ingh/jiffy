@@ -61,7 +61,11 @@ function parseUserArguments() {
     [args.preset]: arg.str().enum(["1", "2", "3", "4"]).desc(
       "Start with UI preset.",
     ),
-    [args.fzfArgs]: arg.str().desc("Custom arguments for fzf."),
+    [args.fzfArgs]: [
+      arg.str().desc(
+        "Custom arguments for fzf.",
+      ),
+    ],
     [args.cache]: arg.flag(true).desc("Cache the application list."),
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(
       "Inject JS code to run at startup.",

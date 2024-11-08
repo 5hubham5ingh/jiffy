@@ -43,7 +43,7 @@ export function fzf(list) {
     "--highlight-line", // Highlight the selected line
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--header-first", // Display the header first (maintains gap between icon and query line)
-    USER_ARGUMENTS?.fzfArgs, // Custom arguments passed by the user
+    ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
   // Calculate the maximum name length among the options in the list to properly align the display
