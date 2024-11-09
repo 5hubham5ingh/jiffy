@@ -3,36 +3,33 @@ import arg from "../qjs-ext-lib/src/arg.js";
 import { notify } from "../justjs/utils.js";
 import { fzf } from "./fzf.js";
 import { getMenu, getUserMenu } from "./menu.js";
+import { ansi } from "../justjs/ansiStyle.js";
 
-//TODO: remove this from code and make it injection that runs on start
-// OS.exec(["kitty", "@", "set-spacing", "margin=0"]);
-
-try {
-  await main();
-} catch (error) {
-  if (error instanceof SystemError) error.log(true);
-  else throw error;
-}
+await main();
 
 /**
  * Main function that sets up global arguments, parses user inputs, and calls the app function.
  * @returns {Promise<void>} A promise that resolves when the main process is complete.
  */
 async function main() {
-  const parsedArgs = parseUserArguments();
-  /**
-   * Define and initialize the global `USER_ARGUMENTS` object. This object will hold user-provided arguments
-   * for various configuration options, such as mode, icon size, and custom scripts.
-   * The `parseUserArguments()` function is called to populate this object with parsed arguments.
-   */
-  globalThis.USER_ARGUMENTS = {
-    pLimit: 4, // Default limit for parallel execution
-    disableNotification: false, // Default flag to enable notifications
-    ...parsedArgs, // Merge parsed user arguments into this object
-  };
+  try {
+    /**
+     * Define and initialize the global `USER_ARGUMENTS` object. This object will hold user-provided arguments
+     * for various configuration options, such as mode, icon size, and custom scripts.
+     * The `parseUserArguments()` function is called to populate this object with parsed arguments.
+     */
+    globalThis.USER_ARGUMENTS = {
+      pLimit: 4, // Default limit for parallel execution
+      disableNotification: false, // Default flag to enable notifications
+      ...parseUserArguments(), // Merge parsed user arguments into this object
+    };
 
-  // Call the `app` function to start the application logic
-  await app(USER_ARGUMENTS.mode);
+    // Call the `app` function to start the application logic
+    await app(USER_ARGUMENTS.mode);
+  } catch (error) {
+    if (error instanceof SystemError) error.log(true);
+    else throw error;
+  }
 }
 
 /**
@@ -46,6 +43,7 @@ function parseUserArguments() {
     mode: "--mode", // Defines the mode of operation
     iconSize: "--icon-size", // Defines the icon size
     preset: "--preset", // Defines the UI preset number
+    printCategory: "--print-category",
     fzfArgs: "--fzf-args", // Defines custom arguments for the fuzzy finder (fzf)
     cache: "--cache", // Flag to enable caching of the application list
     inject: "--inject", // Allows injecting custom JS code at startup
@@ -58,9 +56,10 @@ function parseUserArguments() {
         "Set the mode of commands from modes predefined in the config file.",
       ),
     [args.iconSize]: arg.num(5).min(0).desc("App's icon cell size."),
-    [args.preset]: arg.str().enum(["1", "2", "3", "4"]).desc(
+    [args.preset]: arg.str("1").enum(["1", "2", "3"]).desc(
       "Start with UI preset.",
     ),
+    [args.printCategory]: arg.flag(false).desc("Print app's category."),
     [args.fzfArgs]: [
       arg.str().desc(
         "Custom arguments for fzf.",
@@ -70,10 +69,38 @@ function parseUserArguments() {
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(
       "Inject JS code to run at startup.",
     ),
+    "-m": args.mode, // Short form for --mode
     "-s": args.iconSize, // Short form for --icon-size
     "-p": args.preset, // Short form for --preset
+    "-c": args.printCategory, // Short form for --print-category
+    "-f": args.fzfArgs, // Short form for --fzf-args
+    "-r": args.cache, // short form for --cache
     "-i": args.inject, // Short form for --inject
   })
+    .ex([
+      [
+        `--fzf-args='--prompt=" "' -c`,
+        "Hide prompt and app's category.",
+      ],
+      [
+        '--fzf-args="--preview-window=0" --no-cache',
+        "Hide app description and refresh app's list.",
+      ],
+      [
+        `-p 2 -i 'OS.exec(["kitty", "@", "set-spacing", "margin=0"])'`,
+        "Change UI preset and inject JS to remove window margin.",
+      ],
+    ].map(
+      ([command, description]) =>
+        command.concat(
+          "\n",
+          ansi.style.grey,
+          ansi.style.italic,
+          `- ${description}`,
+          ansi.style.reset,
+        ),
+    ))
+    .ver("0.0.0-alpha.0")
     .parse();
 
   // Convert the parsed arguments into an object and return it
@@ -95,7 +122,7 @@ async function app(menuName) {
   const appMenu = getMenu();
 
   // Use fuzzy finder (fzf) to select the desired app from the menu
-  const selectedApp = fzf(appMenu[menuName]);
+  const selectedApp = fzf(appMenu[menuName], menuName);
   if (!selectedApp) return;
 
   // Initialize an array to hold the command that will be executed

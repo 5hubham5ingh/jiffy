@@ -1,3 +1,4 @@
+import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 
 /**
@@ -5,16 +6,42 @@ import { ProcessSync } from "../qjs-ext-lib/src/process.js";
  * This function customizes the display of app icons, categories, and descriptions,
  * and allows the user to select an app from the list.
  *
- * @param {Array} list - The list of options (e.g., applications) to present to the user for selection.
+ * @param {Array} list - The list of options to present to the user for selection.
  * @returns {Object | undefined} The selected item from the list or undefined if no selection was made.
  */
-export function fzf(list) {
+export function fzf(list, listName) {
   if (!list) throw list;
   // Get the terminal window size (width and height) for formatting purposes
   const [width, height] = OS.ttyGetWinSize();
 
   // Retrieve the icon size from the global user arguments (this will influence the display format)
   const iconSize = USER_ARGUMENTS.iconSize; // WxH
+
+  const [padding, iconPlacement] = (() => {
+    switch (USER_ARGUMENTS.preset) {
+      case "1":
+        return [
+          `${parseInt(iconSize / 2)},0,0,0`,
+          `${iconSize}x${iconSize}@${
+            Math.abs(parseInt(width / 2 - (iconSize / 2)))
+          }x1`,
+        ];
+      case "2":
+        return [
+          `0,0,0,${parseInt(iconSize)}`,
+          `${iconSize}x${iconSize}@${1}x${
+            Math.abs(parseInt((height / 2) - (iconSize / 2)))
+          }`,
+        ];
+      case "3":
+        return [
+          `0,${parseInt(iconSize)},0,0`,
+          `${iconSize}x${iconSize}@${width - iconSize - 1}x${
+            Math.abs(parseInt(height / 2 - (iconSize / 2)))
+          }`,
+        ];
+    }
+  })();
 
   // Define the arguments that will be passed to the `fzf` command
   const fzfArgs = [
@@ -26,18 +53,17 @@ export function fzf(list) {
     "--read0", // Use null-terminated strings for input
     "--delimiter=#", // Set delimiter for separating data
     ...["--with-nth", "-1"], // Configure last columns to display in the fuzzy search
-    "--no-separator", // Do not show any separator between items
     '--separator="═"', // Use a specific separator for the output
-    "--info",
-    "right", // Display information on the right side
-    `--padding=${parseInt(iconSize / 2)},0,0,0`, // Adjust padding for display based on icon size
-    `--info-command='kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --scale-up --place=${iconSize}x${iconSize}@${
-      parseInt(width / 2 - 4).toString()
-    }` +
-    `x1 "$(echo {} | head -n 1 | cut -d'#' -f1)" >>/dev/tty && echo {} | head -n 3 | tail -n 1'`, // Custom info command for displaying icons (using `kitty icat`)
+    ...["--info", "right"], // Display information on the right side
+    `--padding=${padding}`, // Adjust padding for display based on icon size
+    `--info-command='kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --scale-up --place=${iconPlacement}` +
+    ` "$(echo {} | head -n 1 | cut -d'#' -f1)" >>/dev/tty ` +
+    (USER_ARGUMENTS.printCategory
+      ? `&& echo {} | head -n 3 | tail -n 1'`
+      : `'`), // Custom info command for displaying icons (using `kitty icat`)
     '--preview="echo {} | head -n 2 | tail -n 1 | column -c 1"', // Preview command to show more details about the selection
     "--preview-window=down,2,wrap,border-top", // Preview window settings
-    `--prompt=" "`, // Set the prompt to a space (empty)
+    `--prompt="${listName}: "`, // Set the prompt to a space (empty)
     `--marker=""`, // Remove the marker character
     `--pointer=""`, // Remove the pointer symbol
     "--highlight-line", // Highlight the selected line
@@ -57,19 +83,22 @@ export function fzf(list) {
   const styledOptions = list.map((option) => ({
     displayName: `${option?.icon ?? ""}\n` // Display the app's icon (if any)
       .concat(
-        option?.description ?? "", // Display the category, centered if available
+        option?.description ?? "", // Display the description, if available
         "\n",
       )
-      .concat(option?.category ?? "", "\n") // Display the app's keywords
-      .concat( // Display the app's name and description, with proper formatting
+      .concat(option?.category ?? "", "\n") // Display the app's category
+      .concat( // Display the app's name and keywords, with proper formatting
         "#\n",
-        option.name + " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
+        ansi.style.green + option.name + ansi.style.reset +
+          " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
         option?.keywords
           ? ` : ${
             width - maxNameLength - 10 < option.keywords.length
-              ? option.keywords.substring(0, width - maxNameLength - 10)
-                .concat("...") // Truncate description if it exceeds available space
-              : option.keywords
+              ? ansi.style.gray +
+                option.keywords.substring(0, width - maxNameLength - 13)
+                  .concat("...") +
+                ansi.style.reset // Truncate keywords line if it exceeds available space
+              : ansi.style.gray + option.keywords + ansi.style.reset
           }`
           : "",
       ),
