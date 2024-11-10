@@ -151,7 +151,7 @@ async function app(menuName) {
   execCmd.push(selectedApp.exec);
 
   // Execute the command asynchronously and handle any errors
-  execAsync(execCmd.join(" "), { newSession: true })
+  await execAsync(execCmd.join(" "), { newSession: true })
     .catch(async (error) => {
       // If the execution fails, notify the user about the failure
       await notify(

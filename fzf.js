@@ -122,9 +122,11 @@ export function fzf(list, listName) {
   // Run the fzf process and check for success
   if (filter.run() && filter.success) {
     // If a selection is made, find the corresponding option from the list and return it
-    return (styledOptions.find((item) =>
-      item.displayName.trim() === filter.stdout.trim() && // Match the selected option's name
+    const selection = styledOptions.find((item) =>
+      ansi.stripStyle({ text: item.displayName.trim() }) ===
+        filter.stdout.trim() && // Match the selected option's name
       delete item.displayName // Remove the temporary displayName property before returning
-    ));
+    );
+    return selection;
   }
 }
