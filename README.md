@@ -3,6 +3,23 @@
 
 Jiffy is an application launcher and command palette. By default, it helps you quickly launch apps, but it also supports custom commands and menus. It provides a command palette interface where you can easily execute system commands or launch specific applications.
 
+<br>
+
+![pic1](https://github.com/user-attachments/assets/fb58cd8a-eecb-415b-b60d-d5f6121ff3d2)
+![pic2](https://github.com/user-attachments/assets/5860b98b-a35c-492f-aa33-7c0e95501e5c)
+
+<br>
+
+![pic3](https://github.com/user-attachments/assets/924722ab-d423-4f21-b59a-1a9ba6d9ce63)
+![pic5](https://github.com/user-attachments/assets/801d6bee-7f2f-4b57-83a4-a7196115cf4c)
+
+<br>
+
+![pic4](https://github.com/user-attachments/assets/e5dda50a-74f9-4794-874f-3c7dd708c50f)
+![pic6](https://github.com/user-attachments/assets/765cbf90-f7b8-479f-8688-ef904c98e7e4)
+
+<br>
+
 ## Features
 
 - **Application Launcher**: Quickly launch apps by filtering by name and keywords.
