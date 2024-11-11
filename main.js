@@ -4,6 +4,7 @@ import { notify } from "../justjs/utils.js";
 import { fzf } from "./fzf.js";
 import { getMenu, getUserMenu } from "./menu.js";
 import { ansi } from "../justjs/ansiStyle.js";
+import { wait } from "../qjs-ext-lib/src/timers.js";
 
 await main();
 
@@ -29,6 +30,9 @@ async function main() {
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
     else throw error;
+  } finally {
+    await wait(USER_ARGUMENTS.wait);
+    STD.exit(0);
   }
 }
 
@@ -46,6 +50,7 @@ function parseUserArguments() {
     printCategory: "--print-category",
     fzfArgs: "--fzf-args", // Defines custom arguments for the fuzzy finder (fzf)
     cache: "--cache", // Flag to enable caching of the application list
+    wait: "--wait", // Wait specified miliseconds before exiting.
     inject: "--inject", // Allows injecting custom JS code at startup
   };
 
@@ -66,6 +71,9 @@ function parseUserArguments() {
       ),
     ],
     [args.cache]: arg.flag(true).desc("Cache the application list."),
+    [args.wait]: arg.num(0).min(0).desc(
+      "Wait specified miliseconds before exiting.",
+    ),
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(
       "Inject JS code to run at startup.",
     ),
@@ -150,17 +158,14 @@ async function app(menuName) {
   // Add the application execution command to the array (the actual app command)
   execCmd.push(selectedApp.exec);
 
-  // Execute the command asynchronously and handle any errors
-  execAsync(execCmd.join(" "), { newSession: true })
-    .catch(async (error) => {
-      // If the execution fails, notify the user about the failure
-      await notify(
-        `Failed to launch "${execCmd.join(" ")}"`, // Notification title
-        JSON.stringify(`Error code: ${error.state.exitCode}`), // Notification message with error code
-        "critical", // Notification type
-      );
-    });
+  OS.exec(execCmd, { block: false });
+  // ensure app launched
+  while (true) {
+    print("start", execCmd);
+    const appName = (await execAsync(["ps", "-e", "-o", "comm="])).split("\n")
+      .find((appName) => appName.trim() === execCmd.join(" ").trim());
+    print("here", appName);
 
-  // Exit the script after attempting to launch the app
-  STD.exit(0);
+    if (appName) break;
+  }
 }
