@@ -1,6 +1,5 @@
 import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
-import { notify } from "../justjs/utils.js";
 import { fzf } from "./fzf.js";
 import { getMenu, getUserMenu } from "./menu.js";
 import { ansi } from "../justjs/ansiStyle.js";
