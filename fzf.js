@@ -59,9 +59,9 @@ export function fzf(list, listName) {
     `--info-command='kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --scale-up --place=${iconPlacement}` +
     ` "$(echo {} | head -n 1 | cut -d'#' -f1)" >>/dev/tty ` +
     (USER_ARGUMENTS.printCategory
-      ? `&& echo {} | head -n 3 | tail -n 1'`
+      ? `&& echo {} | head -n 4 | tail -n 1'`
       : `'`), // Custom info command for displaying icons (using `kitty icat`)
-    '--preview="echo {} | head -n 2 | tail -n 1 | column -c 1"', // Preview command to show more details about the selection
+    '--preview="echo {} | head -n 2 | tail -n 1 | column -c 1"', // Preview command to show App's description
     "--preview-window=down,2,wrap,border-top", // Preview window settings
     `--prompt="${listName}: "`, // Set the prompt to a space (empty)
     `--marker=""`, // Remove the marker character
@@ -69,6 +69,9 @@ export function fzf(list, listName) {
     "--highlight-line", // Highlight the selected line
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--header-first", // Display the header first (maintains gap between icon and query line)
+    ...[
+      "--bind='enter:execute-silent(`echo {} | head -n 3 | tail -n 1` & disown)+abort'",
+    ],
     ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
@@ -85,7 +88,10 @@ export function fzf(list, listName) {
       .concat(
         option?.description ?? "", // Display the description, if available
         "\n",
-      )
+      ).concat(
+        option.exec,
+        "\n",
+      ) // Command to execute
       .concat(option?.category ?? "", "\n") // Display the app's category
       .concat( // Display the app's name and keywords, with proper formatting
         "#\n",
