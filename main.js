@@ -4,7 +4,6 @@ import { notify } from "../justjs/utils.js";
 import { fzf } from "./fzf.js";
 import { getMenu, getUserMenu } from "./menu.js";
 import { ansi } from "../justjs/ansiStyle.js";
-import { wait } from "../qjs-ext-lib/src/timers.js";
 
 await main();
 
@@ -68,7 +67,7 @@ function parseUserArguments() {
       ),
     ],
     [args.cache]: arg.flag(true).desc("Cache the application list."),
-    [args.terminal]: arg.str().env("TERMINAL").desc(
+    [args.terminal]: arg.str().env("TERMINAL").req().desc(
       "Default terminal to launch terminal apps.",
     ),
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(
@@ -128,42 +127,5 @@ async function app(menuName) {
   const appMenu = getMenu();
 
   // Use fuzzy finder (fzf) to select the desired app from the menu
-  const selectedApp = fzf(appMenu[menuName], menuName);
-  if (!selectedApp) return;
-
-  // Initialize an array to hold the command that will be executed
-  const execCmd = [];
-
-  // If the selected app requires a terminal to run, get the terminal executable from the environment variables
-  if (selectedApp?.terminal) {
-    // Fetch the terminal name from the environment variable `TERMINAL`
-    const terminalExec = STD.getenv("TERMINAL");
-
-    // If no terminal executable is found, notify the user and stop execution
-    if (!terminalExec) {
-      await notify(
-        `Failed to launch '${selectedApp.name}'.`, // Notification title
-        "No TERMINAL found in env var", // Notification message
-        "critical", // Notification type
-      );
-      return;
-    }
-
-    // Add the terminal executable to the command array
-    execCmd.push(terminalExec);
-  }
-
-  // Add the application execution command to the array (the actual app command)
-  execCmd.push(selectedApp.exec);
-
-  OS.exec(execCmd, { block: false });
-  // ensure app launched
-  while (true) {
-    print("start", execCmd);
-    const appName = (await execAsync(["ps", "-e", "-o", "comm="])).split("\n")
-      .find((appName) => appName.trim() === execCmd.join(" ").trim());
-    print("here", appName);
-
-    if (appName) break;
-  }
+  fzf(appMenu[menuName], menuName);
 }
