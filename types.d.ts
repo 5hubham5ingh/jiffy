@@ -5,7 +5,7 @@ export type UserArguments = {
   printCategory: boolean;
   fzfArgs: string[];
   cache: boolean;
-  wait: number;
+  terminal: string;
   inject: () => null;
   pLimit: number;
   disableNotification: boolean;

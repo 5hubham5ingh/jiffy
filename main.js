@@ -30,9 +30,6 @@ async function main() {
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
     else throw error;
-  } finally {
-    await wait(USER_ARGUMENTS.wait);
-    STD.exit(0);
   }
 }
 
@@ -50,7 +47,7 @@ function parseUserArguments() {
     printCategory: "--print-category",
     fzfArgs: "--fzf-args", // Defines custom arguments for the fuzzy finder (fzf)
     cache: "--cache", // Flag to enable caching of the application list
-    wait: "--wait", // Wait specified miliseconds before exiting.
+    terminal: "--terminal", // Wait specified miliseconds before exiting.
     inject: "--inject", // Allows injecting custom JS code at startup
   };
 
@@ -71,8 +68,8 @@ function parseUserArguments() {
       ),
     ],
     [args.cache]: arg.flag(true).desc("Cache the application list."),
-    [args.wait]: arg.num(0).min(0).desc(
-      "Wait specified miliseconds before exiting.",
+    [args.terminal]: arg.str().env("TERMINAL").desc(
+      "Default terminal to launch terminal apps.",
     ),
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(
       "Inject JS code to run at startup.",
@@ -83,6 +80,7 @@ function parseUserArguments() {
     "-c": args.printCategory, // Short form for --print-category
     "-f": args.fzfArgs, // Short form for --fzf-args
     "-r": args.cache, // short form for --cache
+    "-t": args.terminal,
     "-i": args.inject, // Short form for --inject
   })
     .ex([

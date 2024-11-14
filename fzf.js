@@ -69,9 +69,7 @@ export function fzf(list, listName) {
     "--highlight-line", // Highlight the selected line
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--header-first", // Display the header first (maintains gap between icon and query line)
-    ...[
-      "--bind='enter:execute-silent(`echo {} | head -n 3 | tail -n 1` & disown)+abort'",
-    ],
+    "--bind='enter:execute-silent(`echo {} | head -n 3 | tail -n 1` & disown)+abort'",
     ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
@@ -89,6 +87,7 @@ export function fzf(list, listName) {
         option?.description ?? "", // Display the description, if available
         "\n",
       ).concat(
+        option.terminal ? `${USER_ARGUMENTS.terminal} ` : "",
         option.exec,
         "\n",
       ) // Command to execute
