@@ -83,14 +83,14 @@ export function fzf(list, listName) {
   // Format each option in the list with the app icon, category, keywords, name, and description
   const styledOptions = list.map((option) => ({
     displayName: `${option?.icon ?? ""}\n` // Display the app's icon (if any)
-      .concat(
-        option?.description ?? "", // Display the description, if available
+      .concat( // Display the description, if available
+        option?.description ?? "",
         "\n",
-      ).concat(
+      ).concat( // Command to execute
         option.terminal ? `${USER_ARGUMENTS.terminal} ` : "",
         option.exec,
         "\n",
-      ) // Command to execute
+      )
       .concat(option?.category ?? "", "\n") // Display the app's category
       .concat( // Display the app's name and keywords, with proper formatting
         "#\n",
@@ -107,7 +107,7 @@ export function fzf(list, listName) {
           }`
           : "",
       ),
-    ...option, // Include all other properties of the option (e.g., exec commands)
+    ...option, // Include all other properties of the option
   }));
 
   // Create a single string containing all the display names for use in the fzf input

@@ -1,7 +1,7 @@
 import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
 import { fzf } from "./fzf.js";
-import { getMenu, getUserMenu } from "./menu.js";
+import { getMenu, getUserMenu } from "./userMenu.js";
 import { ansi } from "../justjs/ansiStyle.js";
 
 await main();
@@ -24,7 +24,7 @@ async function main() {
     };
 
     // Call the `app` function to start the application logic
-    await app(USER_ARGUMENTS.mode);
+    await app();
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
     else throw error;
@@ -116,15 +116,14 @@ function parseUserArguments() {
 /**
  * Starts the application based on the provided menu name.
  * This function selects an app from the app menu, checks if it should be run in a terminal,
- * and executes the app. If the app execution fails, it sends a notification.
- *
+ * and executes the app.
  * @param {string} [menuName] - The name of the menu to select the application from (optional).
  * @returns {Promise<void>} A promise that resolves once the app is launched or failed.
  */
-async function app(menuName) {
+function app() {
   // Retrieve the menu (e.g., list of apps) using the `getMenu()` function
   const appMenu = getMenu();
 
-  // Use fuzzy finder (fzf) to select the desired app from the menu
-  fzf(appMenu[menuName], menuName);
+  // Use fuzzy finder (fzf) to select the desired app from the menu and launch/ execute it
+  fzf(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
 }
