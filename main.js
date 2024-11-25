@@ -104,7 +104,7 @@ function parseUserArguments() {
           ansi.style.reset,
         ),
     ))
-    .ver("0.0.0-alpha.1")
+    .ver("0.0.0-alpha.2")
     .parse();
 
   // Convert the parsed arguments into an object and return it
