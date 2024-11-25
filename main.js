@@ -44,7 +44,7 @@ function parseUserArguments() {
     preset: "--preset", // Defines the UI preset number
     printCategory: "--print-category",
     fzfArgs: "--fzf-args", // Defines custom arguments for the fuzzy finder (fzf)
-    cache: "--cache", // Flag to enable caching of the application list
+    refresh: "--refresh", // Flag to enable caching of the application list
     terminal: "--terminal", // Wait specified miliseconds before exiting.
     inject: "--inject", // Allows injecting custom JS code at startup
   };
@@ -65,7 +65,7 @@ function parseUserArguments() {
         "Custom arguments for fzf.",
       ),
     ],
-    [args.cache]: arg.flag(true).desc("Cache the application list."),
+    [args.refresh]: arg.flag().desc("Cache the application list."),
     [args.terminal]: arg.str().env("TERMINAL").req().desc(
       "Default terminal to launch terminal apps.",
     ),
@@ -77,7 +77,7 @@ function parseUserArguments() {
     "-p": args.preset, // Short form for --preset
     "-c": args.printCategory, // Short form for --print-category
     "-f": args.fzfArgs, // Short form for --fzf-args
-    "-r": args.cache, // short form for --cache
+    "-r": args.refresh, // short form for --cache
     "-t": args.terminal,
     "-i": args.inject, // Short form for --inject
   })
@@ -123,7 +123,6 @@ function parseUserArguments() {
 function app() {
   // Retrieve the menu (e.g., list of apps) using the `getMenu()` function
   const appMenu = getMenu();
-
   // Use fuzzy finder (fzf) to select the desired app from the menu and launch/ execute it
   fzf(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
 }

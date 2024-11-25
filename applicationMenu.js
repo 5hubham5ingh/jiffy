@@ -58,7 +58,7 @@ function findIconPath(iconName) {
   return iconName;
 }
 
-export function prepareAppsMenu() {
+function prepareAppsMenu() {
   const desktopDirs = [
     "/usr/share/applications",
     HOME_DIR + "/.local/share/applications",
@@ -138,5 +138,58 @@ export function prepareAppsMenu() {
     }
   }
 
-  return { Apps: appMenu };
+  return appMenu;
+}
+
+/**
+ * Retrieves the application menu, potentially from a cache file.
+ * If the cache is not available, it will generate the menu, save it to the cache, and return it.
+ * @returns {Object} The application menu as an object.
+ */
+export function getAppMenu() {
+  // Define the path to the cached application menu directory.
+  const cachedApplicationMenuDirPath = HOME_DIR + "/.cache/jiffy/";
+
+  // Define the full path to the cached application menu file.
+  const cachedApplicationMenuFilePath = cachedApplicationMenuDirPath +
+    "appsMenu.json";
+
+  // If cache is enabled, check if the cached application menu is available.
+  if (!USER_ARGUMENTS.refresh) {
+    // Load the cached file content.
+    const cacheFile = STD.loadFile(cachedApplicationMenuFilePath);
+    if (cacheFile) {
+      return JSON.parse(cacheFile);
+    }
+  }
+
+  // If no valid cache is found, prepare a new application menu.
+  const appMenu = prepareAppsMenu();
+
+  // Create an error object to capture potential issues with file handling.
+  const error = {};
+
+  // Attempt to open the cached application menu file in write mode.
+  let fd = STD.open(cachedApplicationMenuFilePath, "w+", error);
+
+  // If file opening failed (e.g., directory does not exist), ensure the directory exists.
+  if (!fd) {
+    if (error.errno === 2) ensureDir(cachedApplicationMenuDirPath);
+    // Try to open the file again after ensuring the directory exists.
+    fd = STD.open(cachedApplicationMenuFilePath, "w+", error);
+    if (!fd) {
+      // If opening the file still fails, throw an error with details.
+      throw Error(
+        `Failed to open file "${cachedApplicationMenuFilePath}".\nError code: ${error.errno}`,
+      );
+    }
+  }
+
+  const appMenuCache = { Apps: appMenu };
+  // Write the application menu data to the cache file in JSON format.
+  fd.puts(JSON.stringify(appMenuCache));
+
+  fd.close();
+
+  return appMenuCache;
 }

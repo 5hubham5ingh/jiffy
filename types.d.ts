@@ -4,7 +4,7 @@ export type UserArguments = {
   preset: 1 | 2 | 3 | 4;
   printCategory: boolean;
   fzfArgs: string[];
-  cache: boolean;
+  refresh: boolean;
   terminal: string;
   inject: () => null;
   pLimit: number;
