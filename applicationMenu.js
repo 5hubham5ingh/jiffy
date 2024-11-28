@@ -1,3 +1,5 @@
+import { ensureDir } from "./utils.js";
+
 function findIconPath(iconName) {
   // Icon theme search paths
   const ICON_PATHS = [
