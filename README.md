@@ -36,6 +36,21 @@ Jiffy is an application launcher and command palette. By default, it helps you q
 
 - After installing the binary, you can run jiffy from your terminal.
 
+  ### Build from source
+  - Install QuickJs compiler
+    ```bash
+    git clone --depth 1 https://github.com/bellard/quickjs.git &&
+    cd quickjs &&
+    make &&
+    sudo make install &&
+    ```
+  - Get the Jiffy's source code and compile.
+    ```bash
+    git clone --depth 1 https://github.com/5hubham5ingh/jiffy.git &&
+    cd jiffy &&
+    qjsc -flto main.js -o jiffy
+    ```
+
 ### System Requirements
 
 - **Kitty Terminal**
