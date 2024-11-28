@@ -69,7 +69,7 @@ export function fzf(list, listName) {
     "--highlight-line", // Highlight the selected line
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--header-first", // Display the header first (maintains gap between icon and query line)
-    "--bind='enter:become(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)'",
+    "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
     ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
