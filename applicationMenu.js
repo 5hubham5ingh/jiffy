@@ -107,7 +107,7 @@ function prepareAppsMenu() {
       } else if (line.startsWith("Comment=")) {
         currApp.description = line.split("=")[1];
       } else if (line.startsWith("Exec=")) {
-        currApp.exec = line.split("=")[1].split("/").reduce(
+        currApp.exec = "setsid " + line.split("=")[1].split("/").reduce(
           (_, execCmd) => execCmd.split(" ")[0],
           null,
         );

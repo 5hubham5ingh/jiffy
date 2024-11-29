@@ -45,7 +45,7 @@ function parseUserArguments() {
     printCategory: "--print-category",
     fzfArgs: "--fzf-args", // Defines custom arguments for the fuzzy finder (fzf)
     refresh: "--refresh", // Flag to enable caching of the application list
-    terminal: "--terminal", // Wait specified miliseconds before exiting.
+    terminal: "--terminal", // Wait specified milliseconds before exiting.
     inject: "--inject", // Allows injecting custom JS code at startup
   };
 
@@ -104,7 +104,7 @@ function parseUserArguments() {
           ansi.style.reset,
         ),
     ))
-    .ver("0.0.0-alpha.3")
+    .ver("0.0.0-alpha.4")
     .parse();
 
   // Convert the parsed arguments into an object and return it
