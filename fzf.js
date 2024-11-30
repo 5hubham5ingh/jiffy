@@ -87,6 +87,7 @@ export function fzf(list, listName) {
         option?.description ?? "",
         "\n",
       ).concat( // Command to execute
+        "setsid ",
         option.terminal ? `${USER_ARGUMENTS.terminal} ` : "",
         option.exec,
         "\n",
