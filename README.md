@@ -136,6 +136,11 @@ jiffy [ARG] ...
 
    This example changes the UI preset and removes the window margin by injecting JavaScript.
 
+## Todo
+- Emoji picker.
+- Calculator.
+- Window switcher.
+
 ## FAQ
 
 ### Can I customize the menu options?
