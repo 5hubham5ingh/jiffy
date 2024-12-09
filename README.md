@@ -53,7 +53,7 @@ Jiffy is an application launcher and command palette. By default, it helps you q
 
 ### System Requirements
 
-- **Kitty Terminal**
+- **Kitty Terminal** (for displaying app icon)
 - **fzf** (for fuzzy searching)
 
 ## Configuration
