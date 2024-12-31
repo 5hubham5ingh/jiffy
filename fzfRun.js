@@ -63,6 +63,7 @@ export function FzfRun(list, listName) {
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--header-first", // Display the header first (maintains gap between icon and query line)
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
+    "--bind='ctrl-c:become(jiffy -t " + USER_ARGUMENTS.terminal + " -m bc)'",
     ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
