@@ -12,12 +12,14 @@ export default function FzfBc() {
     "--info=right",
     "--prompt=''",
     "--separator=' '",
-    "--bind='enter:clear-query'"
+    "--bind='enter:clear-query'",
+    "--border=rounded", // Set a rounded border for the fzf window
+    "--color=bg+:-1,border:cyan", // Set colors for background and border
   ]
 
   switch (USER_ARGUMENTS.preset) {
-    case "1": fzfArgs.push("--preview-window=top,90%,wrap,border-bottom"); break;
-    case "2": fzfArgs.push("--preview-window=bottom,90%,wrap,border-top"); break;
+    case "1": fzfArgs.push("--preview-window=bottom,90%,wrap,border-top"); break;
+    case "2": fzfArgs.push("--preview-window=top,90%,wrap,border-bottom"); break;
     case "3": fzfArgs.push("--preview-window=right,50%,wrap,border-left"); break;
     case "4": fzfArgs.push("--preview-window=left,50%,wrap,border-right"); break;
   }

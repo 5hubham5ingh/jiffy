@@ -7,25 +7,18 @@ import FzfBc from "./fzfBc.js";
 
 await main();
 
-/**
- * Main function that sets up global arguments, parses user inputs, and calls the app function.
- * @returns {Promise<void>} A promise that resolves when the main process is complete.
- */
 async function main() {
   try {
-    /**
-     * Define and initialize the global `USER_ARGUMENTS` object. This object will hold user-provided arguments
-     * for various configuration options, such as mode, icon size, and custom scripts.
-     * The `parseUserArguments()` function is called to populate this object with parsed arguments.
-     */
-    globalThis.USER_ARGUMENTS = {
-      pLimit: 4, // Default limit for parallel execution
-      disableNotification: false, // Default flag to enable notifications
-      ...parseUserArguments(), // Merge parsed user arguments into this object
-    };
+    globalThis.USER_ARGUMENTS = parseUserArguments()
 
-    // Call the `app` function to start the application logic
-    app();
+    switch (USER_ARGUMENTS.mode) {
+      case "bc":
+        FzfBc(); break;
+
+      default:
+        const appMenu = getMenu();
+        FzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+    }
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
     else throw error;
@@ -47,7 +40,7 @@ function parseUserArguments() {
 
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str("Apps").enum(["Apps", "Calculator", ...Object.keys(getUserMenu())])
+    [args.mode]: arg.str("Apps").enum(["Apps", "bc", ...Object.keys(getUserMenu())])
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
       ),
@@ -109,14 +102,3 @@ function parseUserArguments() {
   );
 }
 
-function app() {
-
-  switch (USER_ARGUMENTS.mode) {
-    case "Calculator":
-      FzfBc(); break;
-
-    default:
-      const appMenu = getMenu();
-      FzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
-  }
-}

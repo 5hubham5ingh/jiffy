@@ -2,12 +2,7 @@ import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 
 /**
- * Function to invoke `fzf` (fuzzy finder) and filter a list of options interactively.
- * This function customizes the display of app icons, categories, and descriptions,
- * and allows the user to select an app from the list.
- *
  * @param {Array} list - The list of options to present to the user for selection.
- * @returns {Object | undefined} The selected item from the list or undefined if no selection was made.
  */
 export function FzfRun(list, listName) {
   if (!list) throw list;
