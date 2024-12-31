@@ -17,20 +17,23 @@ export function FzfRun(list, listName) {
       case "1":
         return [
           `${parseInt(iconSize / 2)},0,0,0`,
-          `${iconSize}x${iconSize}@${Math.abs(parseInt(width / 2 - (iconSize / 2)))
+          `${iconSize}x${iconSize}@${
+            Math.abs(parseInt(width / 2 - (iconSize / 2)))
           }x1`,
         ];
       case "2":
         return [
           `0,0,0,${parseInt(iconSize)}`,
-          `${iconSize}x${iconSize}@${1}x${Math.abs(parseInt((height / 2) - (iconSize / 2)))
+          `${iconSize}x${iconSize}@${1}x${
+            Math.abs(parseInt((height / 2) - (iconSize / 2)))
           }`,
         ];
       case "3":
       default:
         return [
           `0,${parseInt(iconSize)},0,0`,
-          `${iconSize}x${iconSize}@${width - iconSize - 1}x${Math.abs(parseInt(height / 2 - (iconSize / 2)))
+          `${iconSize}x${iconSize}@${width - iconSize - 1}x${
+            Math.abs(parseInt(height / 2 - (iconSize / 2)))
           }`,
         ];
     }
@@ -63,7 +66,7 @@ export function FzfRun(list, listName) {
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--header-first", // Display the header first (maintains gap between icon and query line)
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
-    "--bind='ctrl-c:become(jiffy -t " + USER_ARGUMENTS.terminal + " -m bc)'",
+    "--bind='ctrl-c:become(jiffy -m bc)'",
     ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
@@ -90,14 +93,15 @@ export function FzfRun(list, listName) {
       .concat( // Display the app's name and keywords, with proper formatting
         "#\n",
         ansi.style.green + option.name + ansi.style.reset +
-        " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
+          " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
         option?.keywords
-          ? ` : ${width - maxNameLength - 10 < option.keywords.length
-            ? ansi.style.gray +
-            option.keywords.substring(0, width - maxNameLength - 13)
-              .concat("...") +
-            ansi.style.reset // Truncate keywords line if it exceeds available space
-            : ansi.style.gray + option.keywords + ansi.style.reset
+          ? ` : ${
+            width - maxNameLength - 10 < option.keywords.length
+              ? ansi.style.gray +
+                option.keywords.substring(0, width - maxNameLength - 13)
+                  .concat("...") +
+                ansi.style.reset // Truncate keywords line if it exceeds available space
+              : ansi.style.gray + option.keywords + ansi.style.reset
           }`
           : "",
       ),
@@ -123,7 +127,7 @@ export function FzfRun(list, listName) {
     // If a selection is made, find the corresponding option from the list and return it
     const selection = styledOptions.find((item) =>
       ansi.stripStyle({ text: item.displayName.trim() }) ===
-      filter.stdout.trim() && // Match the selected option's name
+        filter.stdout.trim() && // Match the selected option's name
       delete item.displayName // Remove the temporary displayName property before returning
     );
     return selection;
