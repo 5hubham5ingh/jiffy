@@ -9,7 +9,7 @@ import { ProcessSync } from "../qjs-ext-lib/src/process.js";
  * @param {Array} list - The list of options to present to the user for selection.
  * @returns {Object | undefined} The selected item from the list or undefined if no selection was made.
  */
-export function fzf(list, listName) {
+export function FzfRun(list, listName) {
   if (!list) throw list;
   // Get the terminal window size (width and height) for formatting purposes
   const [width, height] = OS.ttyGetWinSize();
@@ -22,22 +22,20 @@ export function fzf(list, listName) {
       case "1":
         return [
           `${parseInt(iconSize / 2)},0,0,0`,
-          `${iconSize}x${iconSize}@${
-            Math.abs(parseInt(width / 2 - (iconSize / 2)))
+          `${iconSize}x${iconSize}@${Math.abs(parseInt(width / 2 - (iconSize / 2)))
           }x1`,
         ];
       case "2":
         return [
           `0,0,0,${parseInt(iconSize)}`,
-          `${iconSize}x${iconSize}@${1}x${
-            Math.abs(parseInt((height / 2) - (iconSize / 2)))
+          `${iconSize}x${iconSize}@${1}x${Math.abs(parseInt((height / 2) - (iconSize / 2)))
           }`,
         ];
       case "3":
+      default:
         return [
           `0,${parseInt(iconSize)},0,0`,
-          `${iconSize}x${iconSize}@${width - iconSize - 1}x${
-            Math.abs(parseInt(height / 2 - (iconSize / 2)))
+          `${iconSize}x${iconSize}@${width - iconSize - 1}x${Math.abs(parseInt(height / 2 - (iconSize / 2)))
           }`,
         ];
     }
@@ -96,15 +94,14 @@ export function fzf(list, listName) {
       .concat( // Display the app's name and keywords, with proper formatting
         "#\n",
         ansi.style.green + option.name + ansi.style.reset +
-          " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
+        " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
         option?.keywords
-          ? ` : ${
-            width - maxNameLength - 10 < option.keywords.length
-              ? ansi.style.gray +
-                option.keywords.substring(0, width - maxNameLength - 13)
-                  .concat("...") +
-                ansi.style.reset // Truncate keywords line if it exceeds available space
-              : ansi.style.gray + option.keywords + ansi.style.reset
+          ? ` : ${width - maxNameLength - 10 < option.keywords.length
+            ? ansi.style.gray +
+            option.keywords.substring(0, width - maxNameLength - 13)
+              .concat("...") +
+            ansi.style.reset // Truncate keywords line if it exceeds available space
+            : ansi.style.gray + option.keywords + ansi.style.reset
           }`
           : "",
       ),
@@ -130,7 +127,7 @@ export function fzf(list, listName) {
     // If a selection is made, find the corresponding option from the list and return it
     const selection = styledOptions.find((item) =>
       ansi.stripStyle({ text: item.displayName.trim() }) ===
-        filter.stdout.trim() && // Match the selected option's name
+      filter.stdout.trim() && // Match the selected option's name
       delete item.displayName // Remove the temporary displayName property before returning
     );
     return selection;

@@ -1,8 +1,9 @@
 import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
-import { fzf } from "./fzf.js";
+import { FzfRun } from "./fzfRun.js";
 import { getMenu, getUserMenu } from "./userMenu.js";
 import { ansi } from "../justjs/ansiStyle.js";
+import FzfBc from "./fzfBc.js";
 
 await main();
 
@@ -24,18 +25,13 @@ async function main() {
     };
 
     // Call the `app` function to start the application logic
-    await app();
+    app();
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
     else throw error;
   }
 }
 
-/**
- * Parses command-line arguments passed to the script.
- * Defines accepted argument types and provides default values.
- * @returns {import("./types.d.ts").UserArguments} An object containing the parsed user arguments.
- */
 function parseUserArguments() {
   // Define the argument names and their corresponding flags
   const args = {
@@ -51,12 +47,12 @@ function parseUserArguments() {
 
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str("Apps").enum(["Apps", ...Object.keys(getUserMenu())])
+    [args.mode]: arg.str("Apps").enum(["Apps", "Calculator", ...Object.keys(getUserMenu())])
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
       ),
     [args.iconSize]: arg.num(5).min(0).desc("App's icon cell size."),
-    [args.preset]: arg.str("1").enum(["1", "2", "3"]).desc(
+    [args.preset]: arg.str("1").enum(["1", "2", "3", "4"]).desc(
       "Start with UI preset.",
     ),
     [args.printCategory]: arg.flag(false).desc("Print app's category."),
@@ -113,16 +109,14 @@ function parseUserArguments() {
   );
 }
 
-/**
- * Starts the application based on the provided menu name.
- * This function selects an app from the app menu, checks if it should be run in a terminal,
- * and executes the app.
- * @param {string} [menuName] - The name of the menu to select the application from (optional).
- * @returns {Promise<void>} A promise that resolves once the app is launched or failed.
- */
 function app() {
-  // Retrieve the menu (e.g., list of apps) using the `getMenu()` function
-  const appMenu = getMenu();
-  // Use fuzzy finder (fzf) to select the desired app from the menu and launch/ execute it
-  fzf(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+
+  switch (USER_ARGUMENTS.mode) {
+    case "Calculator":
+      FzfBc(); break;
+
+    default:
+      const appMenu = getMenu();
+      FzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+  }
 }
