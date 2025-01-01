@@ -24,3 +24,26 @@ export function ensureDir(dir) {
     if (!dirStat) OS.mkdir(currPath);
   });
 }
+
+
+export function addBorder(string) {
+  const [width, _] = OS.ttyGetWinSize();
+  const horizontalBorder = "─".repeat(width - 3);
+
+  const leftPadding = " ".repeat(Math.floor((width - 3 - string.length) / 2));
+  const rightPadding = " ".repeat(Math.ceil((width - 3 - string.length) / 2));
+
+  const topBorder = "╭" + horizontalBorder + "╮\n";
+  const bottomBorder = "╰" + horizontalBorder + "╯";
+
+  return topBorder + "│" + leftPadding + string + rightPadding + "│\n" + bottomBorder;
+}
+
+
+export function removeBorder(borderedString) {
+  const lines = borderedString.split("\n");
+  const contentLine = lines[1];
+  const originalString = contentLine.slice(1, -1).trim();
+  return originalString;
+}
+

@@ -4,21 +4,14 @@ import { FzfRun } from "./fzfRun.js";
 import { getMenu, getUserMenu } from "./userMenu.js";
 import { ansi } from "../justjs/ansiStyle.js";
 import FzfBc from "./fzfBc.js";
+import fzfChoose from "./fzfChoose.js";
 
 await main();
 
 async function main() {
   try {
     globalThis.USER_ARGUMENTS = parseUserArguments()
-
-    switch (USER_ARGUMENTS.mode) {
-      case "bc":
-        FzfBc(); break;
-
-      default:
-        const appMenu = getMenu();
-        FzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
-    }
+    app()
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
     else throw error;
@@ -40,7 +33,7 @@ function parseUserArguments() {
 
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str("Apps").enum(["Apps", "bc", ...Object.keys(getUserMenu())])
+    [args.mode]: arg.str("Apps").enum(["Apps", "bc", "menu", ...Object.keys(getUserMenu())])
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
       ),
@@ -102,3 +95,16 @@ function parseUserArguments() {
   );
 }
 
+export function app() {
+  switch (USER_ARGUMENTS.mode) {
+    case "bc":
+      FzfBc(); break;
+
+    case "menu":
+      fzfChoose(); break;
+
+    default:
+      const appMenu = getMenu();
+      FzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+  }
+}
