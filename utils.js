@@ -26,8 +26,9 @@ export function ensureDir(dir) {
 }
 
 
+const [width, _] = OS.ttyGetWinSize();
+
 export function addBorder(string) {
-  const [width, _] = OS.ttyGetWinSize();
   const horizontalBorder = "─".repeat(width - 3);
 
   const leftPadding = " ".repeat(Math.floor((width - 3 - string.length) / 2));
@@ -37,6 +38,16 @@ export function addBorder(string) {
   const bottomBorder = "╰" + horizontalBorder + "╯";
 
   return topBorder + "│" + leftPadding + string + rightPadding + "│\n" + bottomBorder;
+}
+
+export function alignCenter(string) {
+  return string.split('\n').map(line => {
+    const leftPadding = " ".repeat(Math.floor((width - 5 - line.length) / 2));
+    const rightPadding = " ".repeat(Math.ceil((width - 5 - line.length) / 2));
+
+    return leftPadding + line + rightPadding;
+  })
+    .join("\n")
 }
 
 

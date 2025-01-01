@@ -6,17 +6,31 @@ import { ansi } from "../justjs/ansiStyle.js";
 import FzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
 
+// Pre-defined modes
+export const predefinedModes = [
+  ["Apps", "a"],
+  ["Basic Calculator", "bc"],
+  ["Jiffy Menu", "m"]
+]
+
 await main();
 
 async function main() {
   try {
+    OS.ttySetRaw()
     globalThis.USER_ARGUMENTS = parseUserArguments()
     app()
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
-    else throw error;
+    else STD.err.puts(
+      `${error.constructor.name}: ${error.message}\n${error.stack}`,
+    );
+    STD.exit(1)
+  } finally {
+    STD.exit(0)
   }
 }
+
 
 function parseUserArguments() {
   // Define the argument names and their corresponding flags
@@ -31,9 +45,10 @@ function parseUserArguments() {
     inject: "--inject", // Allows injecting custom JS code at startup
   };
 
+
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str("Apps").enum(["Apps", "bc", "menu", ...Object.keys(getUserMenu())])
+    [args.mode]: arg.str(predefinedModes[2][0]).enum([...predefinedModes.flat(), ...Object.keys(getUserMenu())])
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
       ),
@@ -96,15 +111,29 @@ function parseUserArguments() {
 }
 
 export function app() {
+
+  const appMenu = getMenu();
+
   switch (USER_ARGUMENTS.mode) {
-    case "bc":
+
+    /* Apps */
+    case predefinedModes[0][0]:
+    case predefinedModes[0][1]:
+      FzfRun(appMenu[predefinedModes[0][0]], predefinedModes[0][0]);
+      break;
+
+    /* Basic Calculator */
+    case predefinedModes[1][0]:
+    case predefinedModes[1][1]:
       FzfBc(); break;
 
-    case "menu":
+    /* Jiffy Menu */
+    case predefinedModes[2][0]:
+    case predefinedModes[2][1]:
       fzfChoose(); break;
 
+    /* User defined menu */
     default:
-      const appMenu = getMenu();
       FzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
   }
 }

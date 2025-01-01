@@ -15,7 +15,9 @@ export default function FzfBc() {
     "--border=rounded", // Set a rounded border for the fzf window
     "--preview-label=' Basic calculator(bc) '",
     "--color=bg+:-1,border:cyan", // Set colors for background and border
-    "--bind='ctrl-a:become(jiffy -m Apps)'",
+    "--bind='ctrl-a:become(jiffy -m a)'",
+    "--bind='ctrl-m:become(jiffy -m m)'",
+    ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
   switch (USER_ARGUMENTS.preset) {
