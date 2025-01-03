@@ -16,8 +16,8 @@ export default function FzfBc() {
     "--preview-label=' Basic calculator(bc) '",
     "--color=bg+:-1,border:cyan", // Set colors for background and border
     "--bind='ctrl-a:become(jiffy -m a)'",
-    "--bind='ctrl-m:become(jiffy -m m)'",
-    ...USER_ARGUMENTS.fzfArgs, // Custom arguments passed by the user
+    "--bind='ctrl-j:become(jiffy -m j)'",
+    ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
   switch (USER_ARGUMENTS.preset) {

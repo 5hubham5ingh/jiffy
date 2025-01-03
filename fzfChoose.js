@@ -23,9 +23,9 @@ export default function fzfChoose() {
     `--header="${alignCenter(header)}"`,
     "--header-first",
     "--bind='ctrl-a:become(jiffy -m a)'",
-    "--bind='ctrl-m:become(jiffy -m m)'",
+    "--bind='ctrl-j:become(jiffy -m j)'",
     "--bind='enter:accept'",
-    ...USER_ARGUMENTS.fzfArgs, // Custom arguments passed by the user
+    ...(USER_ARGUMENTS.fzfArgs ?? []), // Custom arguments passed by the user
 
   ]
 

@@ -61,13 +61,13 @@ export function FzfRun(list, listName) {
     `--pointer=""`, // Remove the pointer symbol
     "--highlight-line", // Highlight the selected line
     "--layout=reverse", // Reverse layout (display results from bottom to top)
-    "--header-first", // Display the header first (maintains gap between icon and query line)
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
-    "--bind='ctrl-b:become(jiffy -m bc)'",
+    "--header-first", // Display the header first (maintains gap between icon and query line)
+    "--bind='ctrl-b:become(jiffy -m bc)'", //TODO: bug: failed to bind bc to ctrl+c
     "--bind='ctrl-r:become(jiffy -m a -r)'",
     "--bind='ctrl-a:become(jiffy -m a)'",
-    "--bind='ctrl-m:become(jiffy -m m)'",
-    ...USER_ARGUMENTS.fzfArgs, // Custom arguments passed by the user
+    "--bind='ctrl-j:become(jiffy -m j)'", // TODO: bug: failed to bind menu to ctrl+m
+    ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
   ];
 
   // Calculate the maximum name length among the options in the list to properly align the display
