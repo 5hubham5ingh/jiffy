@@ -52,9 +52,9 @@ export function alignCenter(string) {
 
 
 export function removeBorder(borderedString) {
-  const lines = borderedString.split("\n");
+  const lines = borderedString.split("\n"); // remove horizontalBorder
   const contentLine = lines[1];
-  const originalString = contentLine.slice(1, -1).trim();
+  const originalString = contentLine.slice(1, -1).trim(); // remove verticle border and padding from text.
   return originalString;
 }
 

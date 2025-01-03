@@ -17,7 +17,7 @@ export default function FzfBc() {
     "--color=bg+:-1,border:cyan", // Set colors for background and border
     "--bind='ctrl-a:become(jiffy -m a)'",
     "--bind='ctrl-m:become(jiffy -m m)'",
-    ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
+    ...USER_ARGUMENTS.fzfArgs, // Custom arguments passed by the user
   ];
 
   switch (USER_ARGUMENTS.preset) {

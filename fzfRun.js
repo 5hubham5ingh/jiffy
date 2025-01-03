@@ -65,8 +65,9 @@ export function FzfRun(list, listName) {
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
     "--bind='ctrl-b:become(jiffy -m bc)'",
     "--bind='ctrl-r:become(jiffy -m a -r)'",
+    "--bind='ctrl-a:become(jiffy -m a)'",
     "--bind='ctrl-m:become(jiffy -m m)'",
-    ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
+    ...USER_ARGUMENTS.fzfArgs, // Custom arguments passed by the user
   ];
 
   // Calculate the maximum name length among the options in the list to properly align the display
