@@ -1,3 +1,5 @@
+import { app } from "./main.js";
+
 export function ensureDir(dir) {
   if (typeof dir !== "string") {
     throw new TypeError("Invalid directory type.");
@@ -25,7 +27,6 @@ export function ensureDir(dir) {
   });
 }
 
-
 const [width, _] = OS.ttyGetWinSize();
 
 export function addBorder(string) {
@@ -37,19 +38,19 @@ export function addBorder(string) {
   const topBorder = "╭" + horizontalBorder + "╮\n";
   const bottomBorder = "╰" + horizontalBorder + "╯";
 
-  return topBorder + "│" + leftPadding + string + rightPadding + "│\n" + bottomBorder;
+  return topBorder + "│" + leftPadding + string + rightPadding + "│\n" +
+    bottomBorder;
 }
 
 export function alignCenter(string) {
-  return string.split('\n').map(line => {
+  return string.split("\n").map((line) => {
     const leftPadding = " ".repeat(Math.floor((width - 5 - line.length) / 2));
     const rightPadding = " ".repeat(Math.ceil((width - 5 - line.length) / 2));
 
     return leftPadding + line + rightPadding;
   })
-    .join("\n")
+    .join("\n");
 }
-
 
 export function removeBorder(borderedString) {
   const lines = borderedString.split("\n"); // remove horizontalBorder
@@ -58,26 +59,34 @@ export function removeBorder(borderedString) {
   return originalString;
 }
 
+export const handleFzfExec = (fzf) => {
+  if (fzf.run() && fzf.success) {
+    if (fzf.stdout.trim() === "change-preset") {
+      const currUiPreset = parseInt(USER_ARGUMENTS.preset);
+      USER_ARGUMENTS.preset = `${currUiPreset >= 4 ? 1 : currUiPreset + 1}`;
+    } else {
+      USER_ARGUMENTS.mode = fzf.stdout.trim();
+    }
+    app();
+  }
+};
+
 let fzfCommonArgs;
 
 export const getFzfCommonArgs = () => {
   return fzfCommonArgs;
-}
+};
 
 export const setCommonFzfArgs = (userArgs) => {
-  const currUiPreset = parseInt(userArgs.preset)
-  const nextPreset = currUiPreset >= 4 ? 1 : currUiPreset + 1;
   fzfCommonArgs = [
-    "--bind='ctrl-e:become(jiffy -m e)'",
-    "--bind='ctrl-b:become(jiffy -m bc)'",
-    "--bind='ctrl-r:become(jiffy -m a -r)'",
-    "--bind='ctrl-a:become(jiffy -m a)'",
-    "--bind='ctrl-j:become(jiffy -m j)'",
-    `--bind='ctrl-space:become(jiffy -m "${userArgs.mode}" -p ${nextPreset})'`,
-    `--bind='ctrl-space:become(jiffy -m "${userArgs.mode}" -p ${nextPreset})'`,
-    `--bind='ctrl-space:become(jiffy -m "${userArgs.mode}" -p ${nextPreset})'`,
-    `--bind='ctrl-space:become(jiffy -m "${userArgs.mode}" -p ${nextPreset})'`,
-    ...(userArgs?.fzfArgs ?? [])
-  ]
-
-}
+    "--border=rounded", // Set a rounded border for the fzf window
+    "--color=bg+:-1,border:cyan", // Set colors for background and border
+    "--layout=reverse", // Reverse layout (display results from bottom to top)
+    "--bind='ctrl-e:become(echo e)'",
+    "--bind='ctrl-b:become(echo bc)'",
+    "--bind='ctrl-a:become(echo a)'",
+    "--bind='ctrl-j:become(echo j)'",
+    `--bind='ctrl-space:become(echo change-preset)'`,
+    ...(userArgs?.fzfArgs ?? []),
+  ];
+};

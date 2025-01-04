@@ -1,17 +1,21 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { app, predefinedModes } from "./main.js";
 import { getUserMenu } from "./userMenu.js";
-import { addBorder, alignCenter, getFzfCommonArgs, removeBorder } from "./utils.js";
+import {
+  addBorder,
+  alignCenter,
+  getFzfCommonArgs,
+  removeBorder,
+} from "./utils.js";
 
 export default function fzfChoose() {
-
   const header = `┏┳  •  ┏  ┏    
  ┃  ┓  ╋  ╋  ┓┏
 ┗┛  ┗  ┛  ┛  ┗┫
-              ┛`
+              ┛`;
 
   const fzfArgs = [
-    'fzf',
+    "fzf",
     "--color=16,current-fg:cyan",
     "--separator=''",
     "--read0",
@@ -19,15 +23,20 @@ export default function fzfChoose() {
     "--prompt=",
     "--marker=",
     "--pointer=",
-    "--layout=reverse",
     `--header="${alignCenter(header)}"`,
     "--header-first",
     "--bind='enter:accept'",
     ...getFzfCommonArgs(),
-  ]
+    "--border=none",
+  ];
 
-  const fzfInput = [...predefinedModes.map(mode => mode[0]), ...Object.keys(getUserMenu())].map(choice => addBorder(choice)).join('\0');
-  const fzfBc = new ProcessSync(
+  const fzfInput = [
+    ...predefinedModes.map((mode, i) =>
+      i !== predefinedModes.length - 1 ? mode[0] : null
+    ).filter(Boolean),
+    ...Object.keys(getUserMenu()),
+  ].map((choice) => addBorder(choice)).join("\0");
+  const fzf = new ProcessSync(
     fzfArgs,
     {
       input: fzfInput,
@@ -35,8 +44,8 @@ export default function fzfChoose() {
     },
   );
 
-  if (fzfBc.run() && fzfBc.success && fzfBc.stdout) {
-    const choice = removeBorder(fzfBc.stdout)
+  if (fzf.run() && fzf.success && fzf.stdout) {
+    const choice = removeBorder(fzf.stdout);
     USER_ARGUMENTS.mode = choice;
     app();
   }

@@ -1,21 +1,18 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { getFzfCommonArgs } from "./utils.js";
+import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
 
 export default function FzfBc() {
   const fzfArgs = [
     "fzf",
     `--info-command="echo {fzf:query} | bc "`, // print results
     "--query=' '",
-    "--layout=reverse",
     `--bind='change:transform-header(echo {fzf:query} | bc 2>&1 >/dev/null)'`, // print bc stderr
     `--preview="echo {fzf:query} | tr ';' '\n';"`,
     "--info=right",
     "--prompt=''",
     "--separator=' '",
     "--bind='enter:clear-query'",
-    "--border=rounded", // Set a rounded border for the fzf window
     "--preview-label=' Basic calculator(bc) '",
-    "--color=bg+:-1,border:cyan", // Set colors for background and border
     ...getFzfCommonArgs(),
   ];
 
@@ -41,6 +38,5 @@ export default function FzfBc() {
       useShell: true, // Allow the use of shell commands in the fzf command
     },
   );
-
-  fzfBc.run();
+  handleFzfExec(fzfBc);
 }

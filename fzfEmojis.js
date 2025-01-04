@@ -1,6 +1,6 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { Emojies } from "./ASCIINulSeperatedString.js"
-import { getFzfCommonArgs } from "./utils.js";
+import { Emojies } from "./ASCIINulSeperatedString.js";
+import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
 
 export function fzfEmojies() {
   const fzfArgs = [
@@ -11,7 +11,6 @@ export function fzfEmojies() {
     "--with-nth 1",
     '--delimiter="\n"',
     "--preview-window=down,1,wrap,border-top",
-    "--layout=reverse",
     "--info=right",
     "--color=16,border:cyan",
     "--query=' '",
@@ -20,7 +19,7 @@ export function fzfEmojies() {
     ...getFzfCommonArgs(),
   ];
 
-  const fzfBc = new ProcessSync(
+  const fzfEmojies = new ProcessSync(
     fzfArgs, // Arguments for the fzf command
     {
       input: Emojies, // Pass the formatted options as input to fzf
@@ -28,6 +27,5 @@ export function fzfEmojies() {
     },
   );
 
-  fzfBc.run();
+  handleFzfExec(fzfEmojies);
 }
-

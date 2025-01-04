@@ -13,28 +13,29 @@ export const predefinedModes = [
   ["Apps", "a"],
   ["Basic calculator", "bc"],
   ["Emojies", "e"],
-  ["Jiffy menu", "j"]
-]
+  ["Jiffy menu", "j"],
+];
 
-await main();
+main();
 
-async function main() {
+function main() {
   try {
-    OS.ttySetRaw()
-    globalThis.USER_ARGUMENTS = parseUserArguments()
+    OS.ttySetRaw();
+    globalThis.USER_ARGUMENTS = parseUserArguments();
     setCommonFzfArgs(USER_ARGUMENTS);
-    app()
+    app();
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
-    else STD.err.puts(
-      `State:\n${JSON.stringify(USER_ARGUMENTS, null, 2)}\n${error.constructor.name}: ${error.message}\n${error.stack}`,
-    );
-    STD.exit(1)
+    else {STD.err.puts(
+        `State:\n${
+          JSON.stringify(USER_ARGUMENTS, null, 2)
+        }\n${error.constructor.name}: ${error.message}\n${error.stack}`,
+      );}
+    STD.exit(1);
   } finally {
-    STD.exit(0)
+    STD.exit(0);
   }
 }
-
 
 function parseUserArguments() {
   // Define the argument names and their corresponding flags
@@ -50,10 +51,12 @@ function parseUserArguments() {
     inject: "--inject", // Allows injecting custom JS code at startup
   };
 
-
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str(predefinedModes[3][0]).enum([...predefinedModes.flat(), ...Object.keys(getUserMenu())])
+    [args.mode]: arg.str(predefinedModes[predefinedModes.length - 1][0]).enum([
+      ...predefinedModes.flat(),
+      ...Object.keys(getUserMenu()),
+    ])
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
       ),
@@ -61,7 +64,9 @@ function parseUserArguments() {
     [args.preset]: arg.str("1").enum(["1", "2", "3", "4"]).desc(
       "Start with UI preset.",
     ),
-    [args.clipboard]: arg.str().req().env('COPY_TO_CLIPBOARD').desc("Clipboard used for pasting the selected emoji."),
+    [args.clipboard]: arg.str().env("COPY_TO_CLIPBOARD").desc(
+      "Clipboard used for pasting the selected emoji.",
+    ),
     [args.printCategory]: arg.flag().desc("Print app's category."),
     [args.fzfArgs]: [
       arg.str().desc(
@@ -69,7 +74,7 @@ function parseUserArguments() {
       ),
     ],
     [args.refresh]: arg.flag().desc("Cache the application list."),
-    [args.terminal]: arg.str().env("TERMINAL").req().desc(
+    [args.terminal]: arg.str().env("TERMINAL").desc(
       "Default terminal to launch terminal apps.",
     ),
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(
@@ -80,7 +85,6 @@ function parseUserArguments() {
     "-p": args.preset, // Short form for --preset
     "-x": args.clipboard, // Short form for --clipboard
     "-c": args.printCategory, // Short form for --print-category
-    "-f": args.fzfArgs, // Short form for --fzf-args
     "-r": args.refresh, // short form for --cache
     "-t": args.terminal,
     "-i": args.inject, // Short form for --inject
@@ -118,11 +122,9 @@ function parseUserArguments() {
 }
 
 export function app() {
-
   const appMenu = getMenu();
 
   switch (USER_ARGUMENTS.mode) {
-
     /* Apps */
     case predefinedModes[0][0]:
     case predefinedModes[0][1]:
@@ -142,11 +144,10 @@ export function app() {
       break;
 
     /* Jiffy Menu */
-    case predefinedModes[3][0]:
-    case predefinedModes[3][1]:
+    case predefinedModes[predefinedModes.length - 1][0]:
+    case predefinedModes[predefinedModes.length - 1][1]:
       fzfChoose();
       break;
-
 
     /* User defined menu */
     default:

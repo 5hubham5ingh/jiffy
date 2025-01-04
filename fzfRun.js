@@ -1,6 +1,6 @@
 import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { getFzfCommonArgs } from "./utils.js";
+import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
 
 /**
  * @param {Array} list - The list of options to present to the user for selection.
@@ -15,24 +15,27 @@ export function FzfRun(list, listName) {
 
   const [padding, iconPlacement] = (() => {
     switch (USER_ARGUMENTS.preset) {
-      case "1":
-        return [
-          `${parseInt(iconSize / 2)},0,0,0`,
-          `${iconSize}x${iconSize}@${Math.abs(parseInt(width / 2 - (iconSize / 2)))
-          }x1`,
-        ];
       case "2":
         return [
           `0,0,0,${parseInt(iconSize)}`,
-          `${iconSize}x${iconSize}@${1}x${Math.abs(parseInt((height / 2) - (iconSize / 2)))
+          `${iconSize}x${iconSize}@${1}x${
+            Math.abs(parseInt((height / 2) - (iconSize / 2)))
           }`,
         ];
       case "3":
-      default:
         return [
           `0,${parseInt(iconSize)},0,0`,
-          `${iconSize}x${iconSize}@${width - iconSize - 1}x${Math.abs(parseInt(height / 2 - (iconSize / 2)))
+          `${iconSize}x${iconSize}@${width - iconSize - 1}x${
+            Math.abs(parseInt(height / 2 - (iconSize / 2)))
           }`,
+        ];
+      case "1":
+      default:
+        return [
+          `${parseInt(iconSize / 2)},0,0,0`,
+          `${iconSize}x${iconSize}@${
+            Math.abs(parseInt(width / 2 - (iconSize / 2)))
+          }x1`,
         ];
     }
   })();
@@ -41,8 +44,6 @@ export function FzfRun(list, listName) {
   const fzfArgs = [
     "fzf", // Launch fzf command
     "--ansi", // Enable ANSI color sequences
-    "--border=rounded", // Set a rounded border for the fzf window
-    "--color=bg+:-1,border:cyan", // Set colors for background and border
     `--header=""`, // Remove any header
     "--read0", // Use null-terminated strings for input
     "--delimiter=#", // Set delimiter for separating data
@@ -61,9 +62,9 @@ export function FzfRun(list, listName) {
     `--marker=""`, // Remove the marker character
     `--pointer=""`, // Remove the pointer symbol
     "--highlight-line", // Highlight the selected line
-    "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
     "--header-first", // Display the header first (maintains gap between icon and query line)
+    "--bind='ctrl-r:become(jiffy -m a -r)'",
     ...getFzfCommonArgs(),
   ];
 
@@ -90,14 +91,15 @@ export function FzfRun(list, listName) {
       .concat( // Display the app's name and keywords, with proper formatting
         "#\n",
         ansi.style.green + option.name + ansi.style.reset +
-        " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
+          " ".repeat(maxNameLength - option.name.length), // Align names by padding with spaces
         option?.keywords
-          ? ` : ${width - maxNameLength - 10 < option.keywords.length
-            ? ansi.style.gray +
-            option.keywords.substring(0, width - maxNameLength - 13)
-              .concat("...") +
-            ansi.style.reset // Truncate keywords line if it exceeds available space
-            : ansi.style.gray + option.keywords + ansi.style.reset
+          ? ` : ${
+            width - maxNameLength - 10 < option.keywords.length
+              ? ansi.style.gray +
+                option.keywords.substring(0, width - maxNameLength - 13)
+                  .concat("...") +
+                ansi.style.reset // Truncate keywords line if it exceeds available space
+              : ansi.style.gray + option.keywords + ansi.style.reset
           }`
           : "",
       ),
@@ -110,7 +112,7 @@ export function FzfRun(list, listName) {
   ).join("");
 
   // Create a new `ProcessSync` to run the `fzf` command synchronously with the formatted options
-  const filter = new ProcessSync(
+  const fzfRun = new ProcessSync(
     fzfArgs, // Arguments for the fzf command
     {
       input: optionNames, // Pass the formatted options as input to fzf
@@ -118,14 +120,5 @@ export function FzfRun(list, listName) {
     },
   );
 
-  // Run the fzf process and check for success
-  if (filter.run() && filter.success) {
-    // If a selection is made, find the corresponding option from the list and return it
-    const selection = styledOptions.find((item) =>
-      ansi.stripStyle({ text: item.displayName.trim() }) ===
-      filter.stdout.trim() && // Match the selected option's name
-      delete item.displayName // Remove the temporary displayName property before returning
-    );
-    return selection;
-  }
+  handleFzfExec(fzfRun);
 }
