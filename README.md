@@ -1,33 +1,19 @@
+<div align = center>
+<h1> Jiffy </h1>
+| App launcher | Basic calculator | Emoji picker | Custom command palette and launcher |
+</div>
 
-# Jiffy
-
-Jiffy is an application launcher and command palette. By default, it helps you quickly launch apps, but it also supports custom commands and menus. It provides a command palette interface where you can easily execute system commands or launch specific applications.
-
+**Launcher**
+<br>
+![jiffyApp](https://github.com/user-attachments/assets/870417da-0ad7-456d-97d0-571884f3ca00)
 <br>
 
-![pic1](https://github.com/user-attachments/assets/fb58cd8a-eecb-415b-b60d-d5f6121ff3d2)
-![pic2](https://github.com/user-attachments/assets/5860b98b-a35c-492f-aa33-7c0e95501e5c)
+### System Requirements
 
-<br>
-
-![pic3](https://github.com/user-attachments/assets/924722ab-d423-4f21-b59a-1a9ba6d9ce63)
-![pic5](https://github.com/user-attachments/assets/801d6bee-7f2f-4b57-83a4-a7196115cf4c)
-
-<br>
-
-![pic4](https://github.com/user-attachments/assets/e5dda50a-74f9-4794-874f-3c7dd708c50f)
-![pic6](https://github.com/user-attachments/assets/765cbf90-f7b8-479f-8688-ef904c98e7e4)
-
-<br>
-
-## Features
-
-- **Application Launcher**: Quickly launch apps by filtering by name and keywords.
-- **Command Palette**: Execute system commands or scripts easily from a customizable menu.
-- **Custom Menus**: Create a personalized `menu.jsonc` configuration to define custom actions like shutdown, reboot, or sleep.
-- **Customizable UI**: Adjust icon sizes, UI presets, and inject custom JavaScript for personalized behavior.
-- **fzf Integration**: Built on the fzf tool for fast, fuzzy searching and selection.
-
+- **Kitty Terminal**(optional) : For displaying app icon images.
+- **fzf** : For fuzzy searching.
+- **bc** : Basic calculator, present in GNU core utils, for calculator.
+  
 ## Installation
 
 - You can download the precompiled binary of Jiffy from the [GitHub Releases page](https://github.com/5hubham5ingh/jiffy/releases).
@@ -50,11 +36,6 @@ Jiffy is an application launcher and command palette. By default, it helps you q
     cd jiffy &&
     qjsc -flto main.js -o jiffy
     ```
-
-### System Requirements
-
-- **Kitty Terminal** (for displaying app icon)
-- **fzf** (for fuzzy searching)
 
 ## Configuration
 
