@@ -6,6 +6,7 @@ import { ansi } from "../justjs/ansiStyle.js";
 import FzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
 import { fzfEmojies } from "./fzfEmojis.js";
+import { fzfCommonArgs } from "./utils.js";
 
 // Pre-defined modes
 export const predefinedModes = [
@@ -21,6 +22,8 @@ async function main() {
   try {
     OS.ttySetRaw()
     globalThis.USER_ARGUMENTS = parseUserArguments()
+    fzfCommonArgs.push(
+      ...(USER_ARGUMENTS?.fzfArgs ?? []))
     app()
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
@@ -40,6 +43,7 @@ function parseUserArguments() {
     mode: "--mode", // Defines the mode of operation
     iconSize: "--icon-size", // Defines the icon size
     preset: "--preset", // Defines the UI preset number
+    clipboard: "--clipboard",
     printCategory: "--print-category",
     fzfArgs: "--fzf-args", // Defines custom arguments for the fuzzy finder (fzf)
     refresh: "--refresh", // Flag to enable caching of the application list
@@ -58,6 +62,7 @@ function parseUserArguments() {
     [args.preset]: arg.str("1").enum(["1", "2", "3", "4"]).desc(
       "Start with UI preset.",
     ),
+    [args.clipboard]: arg.str().req().env('COPY_TO_CLIPBOARD').desc("Clipboard used for pasting the selected emoji."),
     [args.printCategory]: arg.flag().desc("Print app's category."),
     [args.fzfArgs]: [
       arg.str().desc(
@@ -74,6 +79,7 @@ function parseUserArguments() {
     "-m": args.mode, // Short form for --mode
     "-s": args.iconSize, // Short form for --icon-size
     "-p": args.preset, // Short form for --preset
+    "-x": args.clipboard, // Short form for --clipboard
     "-c": args.printCategory, // Short form for --print-category
     "-f": args.fzfArgs, // Short form for --fzf-args
     "-r": args.refresh, // short form for --cache

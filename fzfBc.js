@@ -1,5 +1,5 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { fzfCommenArgs } from "./utils.js";
+import { fzfCommonArgs } from "./utils.js";
 
 export default function FzfBc() {
   const fzfArgs = [
@@ -16,8 +16,7 @@ export default function FzfBc() {
     "--border=rounded", // Set a rounded border for the fzf window
     "--preview-label=' Basic calculator(bc) '",
     "--color=bg+:-1,border:cyan", // Set colors for background and border
-    ...fzfCommenArgs,
-    ...(USER_ARGUMENTS?.fzfArgs ?? []), // Custom arguments passed by the user
+    ...fzfCommonArgs,
   ];
 
   switch (USER_ARGUMENTS.preset) {

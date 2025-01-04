@@ -6,6 +6,7 @@ export type UserArguments = {
   fzfArgs: string[];
   refresh: boolean;
   terminal: string;
+  clipboard: 'xclip' | 'wl';
   inject: () => null;
   pLimit: number;
   disableNotification: boolean;

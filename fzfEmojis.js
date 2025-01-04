@@ -1,6 +1,6 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { Emojies } from "./ASCIINulSeperatedString.js"
-import { fzfCommenArgs } from "./utils.js";
+import { fzfCommonArgs } from "./utils.js";
 
 export function fzfEmojies() {
   const fzfArgs = [
@@ -16,8 +16,8 @@ export function fzfEmojies() {
     "--color=16,border:cyan",
     "--query=' '",
     "--prompt=''",
-    ...fzfCommenArgs,
-    ...(USER_ARGUMENTS?.fzfArgs ?? [])
+    `--bind="enter:execute-silent(echo {} | head -n 1 | cut -d ' ' -f 1 | ${USER_ARGUMENTS.clipboard})"`,
+    ...fzfCommonArgs,
   ];
 
   const fzfBc = new ProcessSync(
