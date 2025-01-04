@@ -1,6 +1,6 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { Emojies } from "./ASCIINulSeperatedString.js"
-import { fzfCommonArgs } from "./utils.js";
+import { getFzfCommonArgs } from "./utils.js";
 
 export function fzfEmojies() {
   const fzfArgs = [
@@ -17,7 +17,7 @@ export function fzfEmojies() {
     "--query=' '",
     "--prompt=''",
     `--bind="enter:execute-silent(echo {} | head -n 1 | cut -d ' ' -f 1 | ${USER_ARGUMENTS.clipboard})"`,
-    ...fzfCommonArgs,
+    ...getFzfCommonArgs(),
   ];
 
   const fzfBc = new ProcessSync(

@@ -6,7 +6,7 @@ import { ansi } from "../justjs/ansiStyle.js";
 import FzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
 import { fzfEmojies } from "./fzfEmojis.js";
-import { fzfCommonArgs } from "./utils.js";
+import { setCommonFzfArgs } from "./utils.js";
 
 // Pre-defined modes
 export const predefinedModes = [
@@ -22,8 +22,7 @@ async function main() {
   try {
     OS.ttySetRaw()
     globalThis.USER_ARGUMENTS = parseUserArguments()
-    fzfCommonArgs.push(
-      ...(USER_ARGUMENTS?.fzfArgs ?? []))
+    setCommonFzfArgs(USER_ARGUMENTS);
     app()
   } catch (error) {
     if (error instanceof SystemError) error.log(true);

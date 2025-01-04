@@ -1,7 +1,7 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { app, predefinedModes } from "./main.js";
 import { getUserMenu } from "./userMenu.js";
-import { addBorder, alignCenter, fzfCommonArgs, removeBorder } from "./utils.js";
+import { addBorder, alignCenter, getFzfCommonArgs, removeBorder } from "./utils.js";
 
 export default function fzfChoose() {
 
@@ -23,7 +23,7 @@ export default function fzfChoose() {
     `--header="${alignCenter(header)}"`,
     "--header-first",
     "--bind='enter:accept'",
-    ...fzfCommonArgs,
+    ...getFzfCommonArgs(),
   ]
 
   const fzfInput = [...predefinedModes.map(mode => mode[0]), ...Object.keys(getUserMenu())].map(choice => addBorder(choice)).join('\0');

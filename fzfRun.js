@@ -1,6 +1,6 @@
 import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { fzfCommonArgs } from "./utils.js";
+import { getFzfCommonArgs } from "./utils.js";
 
 /**
  * @param {Array} list - The list of options to present to the user for selection.
@@ -64,7 +64,7 @@ export function FzfRun(list, listName) {
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
     "--header-first", // Display the header first (maintains gap between icon and query line)
-    ...fzfCommonArgs,
+    ...getFzfCommonArgs(),
   ];
 
   // Calculate the maximum name length among the options in the list to properly align the display

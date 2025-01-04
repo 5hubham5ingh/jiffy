@@ -58,11 +58,26 @@ export function removeBorder(borderedString) {
   return originalString;
 }
 
-export const fzfCommonArgs = [
-  "--bind='ctrl-e:become(jiffy -m e)'",
-  "--bind='ctrl-b:become(jiffy -m bc)'",
-  "--bind='ctrl-r:become(jiffy -m a -r)'",
-  "--bind='ctrl-a:become(jiffy -m a)'",
-  "--bind='ctrl-j:become(jiffy -m j)'",
-]
+let fzfCommonArgs;
 
+export const getFzfCommonArgs = () => {
+  return fzfCommonArgs;
+}
+
+export const setCommonFzfArgs = (userArgs) => {
+  const currUiPreset = parseInt(userArgs.preset)
+  const nextPreset = currUiPreset >= 4 ? 1 : currUiPreset + 1;
+  fzfCommonArgs = [
+    "--bind='ctrl-e:become(jiffy -m e)'",
+    "--bind='ctrl-b:become(jiffy -m bc)'",
+    "--bind='ctrl-r:become(jiffy -m a -r)'",
+    "--bind='ctrl-a:become(jiffy -m a)'",
+    "--bind='ctrl-j:become(jiffy -m j)'",
+    `--bind='ctrl-space:become(jiffy -m "${userArgs.mode}" -p ${nextPreset})'`,
+    `--bind='ctrl-space:become(jiffy -m "${userArgs.mode}" -p ${nextPreset})'`,
+    `--bind='ctrl-space:become(jiffy -m "${userArgs.mode}" -p ${nextPreset})'`,
+    `--bind='ctrl-space:become(jiffy -m "${userArgs.mode}" -p ${nextPreset})'`,
+    ...(userArgs?.fzfArgs ?? [])
+  ]
+
+}
