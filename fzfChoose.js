@@ -1,7 +1,7 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { app, predefinedModes } from "./main.js";
 import { getUserMenu } from "./userMenu.js";
-import { addBorder, alignCenter, removeBorder } from "./utils.js";
+import { addBorder, alignCenter, fzfCommenArgs, removeBorder } from "./utils.js";
 
 export default function fzfChoose() {
 
@@ -22,8 +22,7 @@ export default function fzfChoose() {
     "--layout=reverse",
     `--header="${alignCenter(header)}"`,
     "--header-first",
-    "--bind='ctrl-a:become(jiffy -m a)'",
-    "--bind='ctrl-j:become(jiffy -m j)'",
+    ...fzfCommenArgs,
     "--bind='enter:accept'",
     ...(USER_ARGUMENTS.fzfArgs ?? []), // Custom arguments passed by the user
 
@@ -38,7 +37,7 @@ export default function fzfChoose() {
     },
   );
 
-  if (fzfBc.run() && fzfBc.success) {
+  if (fzfBc.run() && fzfBc.success && fzfBc.stdout) {
     const choice = removeBorder(fzfBc.stdout)
     USER_ARGUMENTS.mode = choice;
     app();

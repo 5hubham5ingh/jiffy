@@ -58,3 +58,11 @@ export function removeBorder(borderedString) {
   return originalString;
 }
 
+export const fzfCommenArgs = [
+  "--bind='ctrl-e:become(jiffy -m e)'",
+  "--bind='ctrl-b:become(jiffy -m bc)'", //TODO: bug: failed to bind bc to ctrl+c
+  "--bind='ctrl-r:become(jiffy -m a -r)'",
+  "--bind='ctrl-a:become(jiffy -m a)'",
+  "--bind='ctrl-j:become(jiffy -m j)'", // TODO: bug: failed to bind menu to ctrl+m
+]
+

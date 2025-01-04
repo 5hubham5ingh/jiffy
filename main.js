@@ -5,11 +5,13 @@ import { getMenu, getUserMenu } from "./userMenu.js";
 import { ansi } from "../justjs/ansiStyle.js";
 import FzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
+import { fzfEmojies } from "./fzfEmojis.js";
 
 // Pre-defined modes
 export const predefinedModes = [
   ["Apps", "a"],
   ["Basic calculator", "bc"],
+  ["Emojies", "e"],
   ["Jiffy menu", "j"]
 ]
 
@@ -23,7 +25,7 @@ async function main() {
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
     else STD.err.puts(
-      `${error.constructor.name}: ${error.message}\n${error.stack}`,
+      `State:\n${JSON.stringify(USER_ARGUMENTS, null, 2)}\n${error.constructor.name}: ${error.message}\n${error.stack}`,
     );
     STD.exit(1)
   } finally {
@@ -48,7 +50,7 @@ function parseUserArguments() {
 
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str(predefinedModes[2][0]).enum([...predefinedModes.flat(), ...Object.keys(getUserMenu())])
+    [args.mode]: arg.str(predefinedModes[3][0]).enum([...predefinedModes.flat(), ...Object.keys(getUserMenu())])
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
       ),
@@ -56,7 +58,7 @@ function parseUserArguments() {
     [args.preset]: arg.str("1").enum(["1", "2", "3", "4"]).desc(
       "Start with UI preset.",
     ),
-    [args.printCategory]: arg.flag(false).desc("Print app's category."),
+    [args.printCategory]: arg.flag().desc("Print app's category."),
     [args.fzfArgs]: [
       arg.str().desc(
         "Custom arguments for fzf.",
@@ -101,7 +103,7 @@ function parseUserArguments() {
           ansi.style.reset,
         ),
     ))
-    .ver("0.0.0-alpha.5")
+    .ver("1.0.0")
     .parse();
 
   // Convert the parsed arguments into an object and return it
@@ -128,16 +130,21 @@ export function app() {
       FzfBc();
       break;
 
-    /* Jiffy Menu */
+    /* Emojies picker */
     case predefinedModes[2][0]:
     case predefinedModes[2][1]:
+      fzfEmojies();
+      break;
+
+    /* Jiffy Menu */
+    case predefinedModes[3][0]:
+    case predefinedModes[3][1]:
       fzfChoose();
       break;
 
+
     /* User defined menu */
     default:
-      console.log('default: user defined')
-      throw EXIT;
       FzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
   }
 }
