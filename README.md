@@ -158,10 +158,6 @@ You can switch between any predefined modes or UI presets using following shotcu
 ## Todo
 - Clipboard manager.
 
-## License
-
-Jiffy is licensed under the MIT License. See `LICENSE` for more information.
-
 ---
 
 Feel free to contribute or open issues if you encounter any problems or have suggestions for new features.
