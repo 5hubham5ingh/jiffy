@@ -1,11 +1,11 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { app, predefinedModes } from "./main.js";
+import { predefinedModes } from "./main.js";
 import { getUserMenu } from "./userMenu.js";
 import {
   addBorder,
   alignCenter,
   getFzfCommonArgs,
-  removeBorder,
+  handleFzfExec,
 } from "./utils.js";
 
 export default function fzfChoose() {
@@ -44,9 +44,5 @@ export default function fzfChoose() {
     },
   );
 
-  if (fzf.run() && fzf.success && fzf.stdout) {
-    const choice = removeBorder(fzf.stdout);
-    USER_ARGUMENTS.mode = choice;
-    app();
-  }
+  handleFzfExec(fzf);
 }

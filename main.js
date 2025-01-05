@@ -22,7 +22,7 @@ function main() {
   try {
     OS.ttySetRaw();
     globalThis.USER_ARGUMENTS = parseUserArguments();
-    setCommonFzfArgs(USER_ARGUMENTS);
+    setCommonFzfArgs();
     app();
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
@@ -33,6 +33,7 @@ function main() {
       );}
     STD.exit(1);
   } finally {
+    print(ansi.style.reset);
     STD.exit(0);
   }
 }
@@ -61,20 +62,20 @@ function parseUserArguments() {
         "Set the mode of commands from modes predefined in the config file.",
       ),
     [args.iconSize]: arg.num(5).min(0).desc("App's icon cell size."),
-    [args.preset]: arg.str("1").enum(["1", "2", "3", "4"]).desc(
+    [args.preset]: arg.str("1").enum(["1", "2", "3"]).desc(
       "Start with UI preset.",
     ),
-    [args.clipboard]: arg.str().env("COPY_TO_CLIPBOARD").desc(
+    [args.clipboard]: arg.str("wl-copy").env("COPY_TO_CLIPBOARD").desc(
       "Clipboard used for pasting the selected emoji.",
     ),
-    [args.printCategory]: arg.flag().desc("Print app's category."),
+    [args.printCategory]: arg.flag(true).desc("Print app's category."),
     [args.fzfArgs]: [
       arg.str().desc(
         "Custom arguments for fzf.",
       ),
     ],
     [args.refresh]: arg.flag().desc("Cache the application list."),
-    [args.terminal]: arg.str().env("TERMINAL").desc(
+    [args.terminal]: arg.str("kitty -1 --hold").env("TERMINAL").desc(
       "Default terminal to launch terminal apps.",
     ),
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(

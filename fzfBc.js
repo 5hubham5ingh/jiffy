@@ -24,10 +24,8 @@ export default function FzfBc() {
       fzfArgs.push("--preview-window=top,90%,wrap,border-bottom");
       break;
     case "3":
+    default:
       fzfArgs.push("--preview-window=right,50%,wrap,border-left");
-      break;
-    case "4":
-      fzfArgs.push("--preview-window=left,50%,wrap,border-right");
       break;
   }
 

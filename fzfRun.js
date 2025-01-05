@@ -15,6 +15,13 @@ export function FzfRun(list, listName) {
 
   const [padding, iconPlacement] = (() => {
     switch (USER_ARGUMENTS.preset) {
+      case "1":
+        return [
+          `${parseInt(iconSize / 2)},0,0,0`,
+          `${iconSize}x${iconSize}@${
+            Math.abs(parseInt(width / 2 - (iconSize / 2)))
+          }x1`,
+        ];
       case "2":
         return [
           `0,0,0,${parseInt(iconSize)}`,
@@ -23,19 +30,12 @@ export function FzfRun(list, listName) {
           }`,
         ];
       case "3":
+      default:
         return [
           `0,${parseInt(iconSize)},0,0`,
           `${iconSize}x${iconSize}@${width - iconSize - 1}x${
             Math.abs(parseInt(height / 2 - (iconSize / 2)))
           }`,
-        ];
-      case "1":
-      default:
-        return [
-          `${parseInt(iconSize / 2)},0,0,0`,
-          `${iconSize}x${iconSize}@${
-            Math.abs(parseInt(width / 2 - (iconSize / 2)))
-          }x1`,
         ];
     }
   })();
@@ -57,8 +57,8 @@ export function FzfRun(list, listName) {
       ? `&& echo {} | head -n 4 | tail -n 1'`
       : `'`), // Custom info command for displaying icons (using `kitty icat`)
     '--preview="echo {} | head -n 2 | tail -n 1 | column -c 1"', // Preview command to show App's description
-    "--preview-window=down,2,wrap,border-top", // Preview window settings
-    `--prompt="${listName}: "`, // Set the prompt to a space (empty)
+    "--preview-window=down,1,wrap,border-top", // Preview window settings
+    `--prompt="${listName}: "`, // Set the prompt to list name
     `--marker=""`, // Remove the marker character
     `--pointer=""`, // Remove the pointer symbol
     "--highlight-line", // Highlight the selected line
@@ -82,7 +82,7 @@ export function FzfRun(list, listName) {
         option?.description ?? "",
         "\n",
       ).concat( // Command to execute
-        "setsid ",
+        "setsid ", // run the command as seperate process
         option.terminal ? `${USER_ARGUMENTS.terminal} ` : "",
         option.exec,
         "\n",

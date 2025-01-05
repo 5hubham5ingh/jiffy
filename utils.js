@@ -1,4 +1,4 @@
-import { app } from "./main.js";
+import { app, predefinedModes } from "./main.js";
 
 export function ensureDir(dir) {
   if (typeof dir !== "string") {
@@ -54,6 +54,7 @@ export function alignCenter(string) {
 
 export function removeBorder(borderedString) {
   const lines = borderedString.split("\n"); // remove horizontalBorder
+  if (lines.length === 1) return borderedString; // means there is no border and padding
   const contentLine = lines[1];
   const originalString = contentLine.slice(1, -1).trim(); // remove verticle border and padding from text.
   return originalString;
@@ -61,11 +62,16 @@ export function removeBorder(borderedString) {
 
 export const handleFzfExec = (fzf) => {
   if (fzf.run() && fzf.success) {
-    if (fzf.stdout.trim() === "change-preset") {
+    const stdout = removeBorder(fzf.stdout.trim()).split("###");
+    if (stdout[0] === "change-preset") {
       const currUiPreset = parseInt(USER_ARGUMENTS.preset);
-      USER_ARGUMENTS.preset = `${currUiPreset >= 4 ? 1 : currUiPreset + 1}`;
+      USER_ARGUMENTS.preset = `${currUiPreset >= 3 ? 1 : currUiPreset + 1}`;
+      fzfCommonArgs.push(`--query="${stdout[1]}"`);
+    } else if (predefinedModes.flat().includes(stdout[0])) {
+      fzfCommonArgs.push(`--query=" "`);
+      USER_ARGUMENTS.mode = stdout[0];
     } else {
-      USER_ARGUMENTS.mode = fzf.stdout.trim();
+      USER_ARGUMENTS.mode = stdout[0];
     }
     app();
   }
@@ -77,7 +83,7 @@ export const getFzfCommonArgs = () => {
   return fzfCommonArgs;
 };
 
-export const setCommonFzfArgs = (userArgs) => {
+export const setCommonFzfArgs = () => {
   fzfCommonArgs = [
     "--border=rounded", // Set a rounded border for the fzf window
     "--color=bg+:-1,border:cyan", // Set colors for background and border
@@ -86,7 +92,7 @@ export const setCommonFzfArgs = (userArgs) => {
     "--bind='ctrl-b:become(echo bc)'",
     "--bind='ctrl-a:become(echo a)'",
     "--bind='ctrl-j:become(echo j)'",
-    `--bind='ctrl-space:become(echo change-preset)'`,
-    ...(userArgs?.fzfArgs ?? []),
+    "--bind='ctrl-space:become(echo change-preset###${FZF_QUERY})'",
+    ...(USER_ARGUMENTS?.fzfArgs ?? []),
   ];
 };
