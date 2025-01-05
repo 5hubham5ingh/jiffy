@@ -1,18 +1,37 @@
 <div align = center>
-<h1> Jiffy </h1>
-| App launcher | Basic calculator | Emoji picker | Custom command palette and launcher |
+<h1 > Jiffy </h1>
+𝐴𝑝𝑝 𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑟 | 𝐵𝑎𝑠𝑖𝑐 𝑐𝑎𝑙𝑐𝑢𝑙𝑎𝑡𝑜𝑟 | 𝐸𝑚𝑜𝑗𝑖 𝑝𝑖𝑐𝑘𝑒𝑟
+   <br> 𝐶𝑢𝑠𝑡𝑜𝑚 𝑐𝑜𝑚𝑚𝑎𝑛𝑑 𝑝𝑎𝑙𝑙𝑒𝑡𝑡𝑒
 </div>
+
+---
 
 **Launcher**
 <br>
 ![jiffyApp](https://github.com/user-attachments/assets/870417da-0ad7-456d-97d0-571884f3ca00)
 <br>
 
-### System Requirements
+**Emojies**
+<br>
+![emoji](https://github.com/user-attachments/assets/049beca9-5769-42d4-892c-ac498dacafa1)
+<br>
 
+**Calculator**
+<br>
+![bc](https://github.com/user-attachments/assets/99d67870-8378-4988-8cef-38f3e16bc139)
+<br>
+
+### Dependencies
+#### External
 - **Kitty Terminal**(optional) : For displaying app icon images.
 - **fzf** : For fuzzy searching.
-- **bc** : Basic calculator, present in GNU core utils, for calculator.
+#### GNU core utils
+- **bc** : Basic calculator.
+- **head** : Used in fzf's commands.
+- **tail** : Same as above.
+- **echo** : Same as above.
+- **cut** : Same as above.
+- **column** : Same as above.
   
 ## Installation
 
@@ -35,6 +54,7 @@
     git clone --depth 1 https://github.com/5hubham5ingh/jiffy.git &&
     cd jiffy &&
     qjsc -flto main.js -o jiffy
+    sudo mv jiffy /usr/bin/
     ```
 
 ## Configuration
@@ -49,22 +69,26 @@ Jiffy allows you to define custom menus in a `menu.jsonc` file. This file can be
     {
       "name": "Shutdown",
       "exec": "shutdown -P now",
-      "description": "System shutdown."
+      "description": "System shutdown.",
+      "icon" : "/home/ss/.config/jiffy/icons/shutdown.png"
     },
     {
       "name": "Sleep",
       "exec": "shutdown -H now",
-      "description": "System sleep."
+      "description": "System sleep.",
+      "icon" : "/home/ss/.config/jiffy/icons/sleep.png"
     },
     {
       "name": "Reboot",
       "exec": "shutdown -r now",
-      "description": "System reboot."
+      "description": "System reboot.",
+      "icon" : "/home/ss/.config/jiffy/icons/reboot.png"
     },
     {
       "name": "List scheduled shutdown.",
       "exec": "shutdown --show",
       "description": "List scheduled shutdown.",
+      "icon" : "/home/ss/.config/jiffy/icons/list.png",
       "terminal": true
     }
   ]
@@ -83,19 +107,21 @@ jiffy [ARG] ...
 
 ### Options
 
-|   Shortcut          |  Option      | Default                                                   | Description                                                |
-| ------------------------- | -------- | --------------------------------------------------------- | ---------------------------------------------------------- |
-| `-m`| `--mode VAL`                  | `Apps`                                                    | Set the mode of commands from predefined modes (e.g., Apps, Power Menu). |
-| `-s`| `--icon-size NUM`            | `5`                                                        | Set the app's icon cell size.                              |
-| `-p`| `--preset VAL`               | `1`                                                        | Start with UI preset. Available presets: `1`, `2`, `3`.     |
-| `-c`| `--(no-)print-category`        | -                                                         | Print app's category when listing apps.                    |
-| `-f`| `--fzf-args VAL (+)`         | -                                                         | Custom arguments for fzf. Can be set multiple times.       |
-| `-r`| `--(no-)cache`              | Enabled (default)                                         | Cache the application list. Set to `--no-cache` to disable.|
-| `-i`| `--inject JS`                | -                                                         | Inject JavaScript code to run at startup.                  |
-| `-h`             | `--help` | -                                                         | Print help text.                                           |
-| `--version`                | `--version` | -                                                      | Print the current version.                                 |
+| Option | Description | Possible Values | Default |
+|---|---|---|---|
+| -m, --mode VAL | Set the mode of commands from modes predefined in the config file. | Apps, a, Basic calculator, bc, Emojies, e, Jiffy menu, j, +menus from menu.jsonc | Jiffy menu |
+| -s, --icon-size NUM | App's icon cell size. | Any integer | 5 |
+| -p, --preset VAL | Start with UI preset. | 1, 2, 3 | 1 |
+| -x, --clipboard VAL | Clipboard used for pasting the selected emoji. | Any valid clipboard command (e.g., `xsel`, `xclip`) | wl-copy |
+| -c, --(no-)print-category | Print app's category. | `--print-category`, `--no-print-category` | `--print-category` |
+| --fzf-args VAL (+) | Custom arguments for fzf. | Any valid fzf argument |  |
+| -r, --(no-)refresh | Cache the application list. | `--refresh`, `--no-refresh` | `--no-refresh` |
+| -t, --terminal VAL | Default terminal to launch terminal apps. | Any valid terminal command | kitty -1 --hold |
+| -i, --inject JS | Inject JS code to run at startup. | Any valid JavaScript code |  |
+| -h, --help | print help |  |
+| --version | print version |  |
 
-### Examples
+#### Examples
 
 1. **Hide prompt and app's category**:
 
@@ -117,24 +143,20 @@ jiffy [ARG] ...
 
    This example changes the UI preset and removes the window margin by injecting JavaScript.
 
+### Keyboard Shortcuts
+You can switch between any predefined modes or UI presets using following shotcut keys-
+| Shortcut | Action |
+|---|---|
+| ctrl+space | Change UI preset |
+| ctrl+e | Emoji mode |
+| ctrl+j | Jiffy menu |
+| ctrl+b | Basic calculator |
+| ctrl+a | App launcher |
+| ctrl+r | Refresh system applications list (for app launcher) |
+
+
 ## Todo
-- Emoji picker.
-- Calculator.
-- Window switcher.
-
-## FAQ
-
-### Can I customize the menu options?
-
-Yes, you can modify the `menu.jsonc` file to define your custom menus and actions. This file can be created or edited in `~/.config/jiffy/menu.jsonc`.
-
-### What happens if I don't specify a menu?
-
-By default, Jiffy starts in "Apps" mode, which will list all applications available on your system for launching.
-
-### How do I use the command palette?
-
-Once Jiffy is running, you can quickly search and run commands defined in your `menu.jsonc` or use fzf to find and launch apps. You can switch between predefined modes like "Apps" and "Power Menu" with the `-m` option.
+- Clipboard manager.
 
 ## License
 
