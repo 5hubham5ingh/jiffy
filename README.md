@@ -52,8 +52,10 @@
   - Get the Jiffy's source code and compile.
     ```bash
     git clone --depth 1 https://github.com/5hubham5ingh/jiffy.git &&
+    git clone --depth 1 https://github.com/5hubham5ingh/justjs.git &&
+    git clone --depth 1 https://github.com/ctn-malone/qjs-ext-lib.git &&
     cd jiffy &&
-    qjsc -flto main.js -o jiffy
+    qjsc -flto main.js -o jiffy &&
     sudo mv jiffy /usr/bin/
     ```
 
