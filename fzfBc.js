@@ -1,7 +1,7 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
 
-export default function FzfBc() {
+export default function fzfBc() {
   const fzfArgs = [
     "fzf",
     `--info-command="echo {fzf:query} | bc "`, // print results

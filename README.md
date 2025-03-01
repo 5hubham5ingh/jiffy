@@ -22,22 +22,28 @@
 <br>
 
 ### Dependencies
+
 #### External
+
 - **Kitty Terminal**(optional) : For displaying app icon images.
 - **fzf** : For fuzzy searching.
+
 #### GNU core utils
+
 - **bc** : Basic calculator.
 - **head** : Used in fzf's commands.
 - **tail** : Same as above.
 - **echo** : Same as above.
 - **cut** : Same as above.
 - **column** : Same as above.
-  
+
 ## Installation
 
-- You can download the precompiled binary of Jiffy from the [GitHub Releases page](https://github.com/5hubham5ingh/jiffy/releases).
+- You can download the precompiled binary of Jiffy from the
+  [GitHub Releases page](https://github.com/5hubham5ingh/jiffy/releases).
 
-- Move the binary to a directory included in your system's `PATH` (e.g., `/usr/local/bin` or `~/bin`).
+- Move the binary to a directory included in your system's `PATH` (e.g.,
+  `/usr/local/bin` or `~/bin`).
 
 - After installing the binary, you can run jiffy from your terminal.
 
@@ -61,7 +67,10 @@
 
 ## Configuration
 
-Jiffy allows you to define custom menus in a `menu.jsonc` file. This file can be placed in your `~/.config/jiffy/` directory. The menu follows the JSONC format, where you can specify different system actions like shutdown, reboot, sleep, and other commands.
+Jiffy allows you to define custom menus in a `menu.jsonc` file. This file can be
+placed in your `~/.config/jiffy/` directory. The menu follows the JSONC format,
+where you can specify different system actions like shutdown, reboot, sleep, and
+other commands.
 
 ### Example `menu.jsonc`
 
@@ -72,32 +81,34 @@ Jiffy allows you to define custom menus in a `menu.jsonc` file. This file can be
       "name": "Shutdown",
       "exec": "shutdown -P now",
       "description": "System shutdown.",
-      "icon" : "/home/ss/.config/jiffy/icons/shutdown.png"
+      "icon": "/home/ss/.config/jiffy/icons/shutdown.png"
     },
     {
       "name": "Sleep",
       "exec": "shutdown -H now",
       "description": "System sleep.",
-      "icon" : "/home/ss/.config/jiffy/icons/sleep.png"
+      "icon": "/home/ss/.config/jiffy/icons/sleep.png"
     },
     {
       "name": "Reboot",
       "exec": "shutdown -r now",
       "description": "System reboot.",
-      "icon" : "/home/ss/.config/jiffy/icons/reboot.png"
+      "icon": "/home/ss/.config/jiffy/icons/reboot.png"
     },
     {
       "name": "List scheduled shutdown.",
       "exec": "shutdown --show",
       "description": "List scheduled shutdown.",
-      "icon" : "/home/ss/.config/jiffy/icons/list.png",
+      "icon": "/home/ss/.config/jiffy/icons/list.png",
       "terminal": true
     }
   ]
 }
 ```
 
-This example defines a "Power Menu" with shutdown, reboot, and sleep options. The `exec` field specifies the command to run, and the `description` gives a brief explanation of each option.
+This example defines a "Power Menu" with shutdown, reboot, and sleep options.
+The `exec` field specifies the command to run, and the `description` gives a
+brief explanation of each option.
 
 ## Usage
 
@@ -109,19 +120,19 @@ jiffy [ARG] ...
 
 ### Options
 
-| Option | Description | Possible Values | Default |
-|---|---|---|---|
-| -m, --mode VAL | Set the mode of commands from modes predefined in the config file. | Apps, a, Basic calculator, bc, Emojies, e, Jiffy menu, j, +menus from menu.jsonc | Jiffy menu |
-| -s, --icon-size NUM | App's icon cell size. | Any integer | 5 |
-| -p, --preset VAL | Start with UI preset. | 1, 2, 3 | 1 |
-| -x, --clipboard VAL | Clipboard used for pasting the selected emoji. | Any valid clipboard command (e.g., `xsel`, `xclip`) | wl-copy |
-| -c, --(no-)print-category | Print app's category. | `--print-category`, `--no-print-category` | `--print-category` |
-| --fzf-args VAL (+) | Custom arguments for fzf. | Any valid fzf argument |  |
-| -r, --(no-)refresh | Cache the application list. | `--refresh`, `--no-refresh` | `--no-refresh` |
-| -t, --terminal VAL | Default terminal to launch terminal apps. | Any valid terminal command | kitty -1 --hold |
-| -i, --inject JS | Inject JS code to run at startup. | Any valid JavaScript code |  |
-| -h, --help | print help |  |
-| --version | print version |  |
+| Option                    | Description                                                        | Possible Values                                                                  | Default            |
+| ------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- | ------------------ |
+| -m, --mode VAL            | Set the mode of commands from modes predefined in the config file. | Apps, a, Basic calculator, bc, Emojies, e, Jiffy menu, j, +menus from menu.jsonc | Jiffy menu         |
+| -s, --icon-size NUM       | App's icon cell size.                                              | Any integer                                                                      | 5                  |
+| -p, --preset VAL          | Start with UI preset.                                              | 1, 2, 3                                                                          | 1                  |
+| -x, --clipboard VAL       | Clipboard used for pasting the selected emoji.                     | Any valid clipboard command (e.g., `xsel`, `xclip`)                              | wl-copy            |
+| -c, --(no-)print-category | Print app's category.                                              | `--print-category`, `--no-print-category`                                        | `--print-category` |
+| --fzf-args VAL (+)        | Custom arguments for fzf.                                          | Any valid fzf argument                                                           |                    |
+| -r, --(no-)refresh        | Cache the application list.                                        | `--refresh`, `--no-refresh`                                                      | `--no-refresh`     |
+| -t, --terminal VAL        | Default terminal to launch terminal apps.                          | Any valid terminal command                                                       | kitty -1 --hold    |
+| -i, --inject JS           | Inject JS code to run at startup.                                  | Any valid JavaScript code                                                        |                    |
+| -h, --help                | print help                                                         |                                                                                  |                    |
+| --version                 | print version                                                      |                                                                                  |                    |
 
 #### Examples
 
@@ -143,23 +154,30 @@ jiffy [ARG] ...
    jiffy -p 2 -i 'OS.exec(["kitty", "@", "set-spacing", "margin=0"])'
    ```
 
-   This example changes the UI preset and removes the window margin by injecting JavaScript.
+   This example changes the UI preset and removes the window margin by injecting
+   JavaScript.
 
 ### Keyboard Shortcuts
-You can switch between any predefined modes or UI presets using following shotcut keys-
-| Shortcut | Action |
-|---|---|
-| ctrl+space | Change UI preset |
-| ctrl+e | Emoji mode |
-| ctrl+j | Jiffy menu |
-| ctrl+b | Basic calculator |
-| ctrl+a | App launcher |
-| ctrl+r | Refresh system applications list (for app launcher) |
 
+You can switch between any predefined modes or UI presets using following
+shotcut keys-
+
+| Shortcut   | Action                                              |
+| ---------- | --------------------------------------------------- |
+| ctrl+space | Change UI preset                                    |
+| ctrl+e     | Emoji mode                                          |
+| ctrl+j     | Jiffy menu                                          |
+| ctrl+b     | Basic calculator                                    |
+| ctrl+a     | App launcher                                        |
+| ctrl+r     | Refresh system applications list (for app launcher) |
 
 ## Todo
+
 - Clipboard manager.
+- Disable icon when mode != App.
+- Separate UI for fzfRun
 
 ---
 
-Feel free to contribute or open issues if you encounter any problems or have suggestions for new features.
+Feel free to contribute or open issues if you encounter any problems or have
+suggestions for new features.

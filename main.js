@@ -1,9 +1,9 @@
 import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
-import { FzfRun } from "./fzfRun.js";
+import fzfLaunch from "./fzfRun.js";
 import { getMenu, getUserMenu } from "./userMenu.js";
 import { ansi } from "../justjs/ansiStyle.js";
-import FzfBc from "./fzfBc.js";
+import fzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
 import { fzfEmojies } from "./fzfEmojis.js";
 import { setCommonFzfArgs } from "./utils.js";
@@ -129,13 +129,13 @@ export function app() {
     /* Apps */
     case predefinedModes[0][0]:
     case predefinedModes[0][1]:
-      FzfRun(appMenu[predefinedModes[0][0]], predefinedModes[0][0]);
+      fzfLaunch(appMenu[predefinedModes[0][0]], predefinedModes[0][0]);
       break;
 
     /* Basic Calculator */
     case predefinedModes[1][0]:
     case predefinedModes[1][1]:
-      FzfBc();
+      fzfBc();
       break;
 
     /* Emojies picker */
@@ -152,6 +152,6 @@ export function app() {
 
     /* User defined menu */
     default:
-      FzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+      fzfLaunch(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
   }
 }

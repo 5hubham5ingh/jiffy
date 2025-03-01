@@ -5,7 +5,7 @@ import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
 /**
  * @param {Array} list - The list of options to present to the user for selection.
  */
-export function FzfRun(list, listName) {
+export default function fzfLaunch(list, listName) {
   if (!list) throw list;
   // Get the terminal window size (width and height) for formatting purposes
   const [width, height] = OS.ttyGetWinSize();
