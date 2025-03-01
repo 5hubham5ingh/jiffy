@@ -9,10 +9,10 @@ import {
 } from "./utils.js";
 
 export default async function fzfChoose() {
-  const header = `┏┳  •  ┏  ┏    
- ┃  ┓  ╋  ╋  ┓┏
-┗┛  ┗  ┛  ┛  ┗┫
-              ┛`;
+  const header = `  ┏┳  •  ┏  ┏    
+   ┃  ┓  ╋  ╋  ┓┏
+  ┗┛  ┗  ┛  ┛  ┗┫
+                ┛`;
 
   const fzfArgs = [
     "fzf",
