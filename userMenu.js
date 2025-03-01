@@ -9,7 +9,15 @@ export default async function getUserMenu() {
   if (userMenu) return userMenu;
   const userMenuFromJson = getUserMenuFromJson();
   const userMenuFromJs = await getUserMenuFromJs();
-  userMenu = { ...userMenuFromJson, ...userMenuFromJs };
+  userMenu = userMenuFromJson;
+
+  for (const key in userMenuFromJs) {
+    if (userMenu.hasOwnProperty(key)) {
+      userMenu[key] = [...userMenu[key], ...userMenuFromJs[key]];
+    } else {
+      userMenu[key] = userMenuFromJs[key];
+    }
+  }
   return userMenu;
 }
 
