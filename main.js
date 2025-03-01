@@ -1,11 +1,12 @@
 import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
 import fzfLaunch from "./fzfLaunch.js";
+import fzfRun from "./fzfRun.js";
 import { getMenu, getUserMenu } from "./userMenu.js";
 import { ansi } from "../justjs/ansiStyle.js";
 import fzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
-import { fzfEmojies } from "./fzfEmojis.js";
+import fzfEmojies from "./fzfEmojis.js";
 import { setCommonFzfArgs } from "./utils.js";
 
 // Pre-defined modes
@@ -152,6 +153,6 @@ export function app() {
 
     /* User defined menu */
     default:
-      fzfLaunch(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+      fzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
   }
 }
