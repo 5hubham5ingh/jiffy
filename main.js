@@ -133,19 +133,19 @@ export async function app() {
     /* Apps */
     case predefinedModes[0][0]:
     case predefinedModes[0][1]:
-      fzfLaunch(menu[predefinedModes[0][0]], predefinedModes[0][0]);
+      await fzfLaunch(menu[predefinedModes[0][0]], predefinedModes[0][0]);
       break;
 
     /* Basic Calculator */
     case predefinedModes[1][0]:
     case predefinedModes[1][1]:
-      fzfBc();
+      await fzfBc();
       break;
 
     /* Emojies picker */
     case predefinedModes[2][0]:
     case predefinedModes[2][1]:
-      fzfEmojies();
+      await fzfEmojies();
       break;
 
     /* Jiffy Menu */
@@ -156,6 +156,6 @@ export async function app() {
 
     /* User defined menu */
     default:
-      fzfRun(menu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+      await fzfRun(menu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
   }
 }

@@ -174,8 +174,9 @@ shotcut keys-
 ## Todo
 
 - Clipboard manager.
-- Disable icon when mode != App.
-- Separate UI for fzfRun
+- Keymap for changing icon size.
+- Keymap for showing keymap.
+- Dynamic shotcut keys creation
 
 ---
 

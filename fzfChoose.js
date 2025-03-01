@@ -44,5 +44,5 @@ export default async function fzfChoose() {
     },
   );
 
-  handleFzfExec(fzf);
+  await handleFzfExec(fzf);
 }
