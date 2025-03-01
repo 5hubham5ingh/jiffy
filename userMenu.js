@@ -1,24 +1,11 @@
 import { ensureDir } from "../justjs/utils.js";
-import { getAppMenu } from "./applicationMenu.js";
-
-/**
- * Retrieves the combined user and application menus.
- * @returns {Object} The merged menu object, including user-specific and application menus.
- */
-export function getMenu() {
-  // Merge the user menu and app menu to create the final menu.
-  const menu = { ...getUserMenu(), ...getAppMenu() };
-
-  // Return the merged menu.
-  return menu;
-}
 
 let userMenu;
 /**
  * Retrieves the user-specific menu from a JSON file located in the user's config directory.
  * @returns {Object} The user menu as an object, or an empty object if no menu is found or there is an error.
  */
-export function getUserMenu() {
+export default function getUserMenu() {
   if (userMenu) return userMenu;
   // Define the path to the user's menu directory.
   const userMenuDirPath = HOME_DIR + "/.config/jiffy/";

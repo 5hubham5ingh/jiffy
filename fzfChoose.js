@@ -1,6 +1,6 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { predefinedModes } from "./main.js";
-import { getUserMenu } from "./userMenu.js";
+import getUserMenu from "./userMenu.js";
 import {
   addBorder,
   alignCenter,

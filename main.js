@@ -2,12 +2,13 @@ import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
 import fzfLaunch from "./fzfLaunch.js";
 import fzfRun from "./fzfRun.js";
-import { getMenu, getUserMenu } from "./userMenu.js";
+import getUserMenu from "./userMenu.js";
 import { ansi } from "../justjs/ansiStyle.js";
 import fzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
 import fzfEmojies from "./fzfEmojis.js";
 import { setCommonFzfArgs } from "./utils.js";
+import { getAppMenu } from "./applicationMenu.js";
 
 // Pre-defined modes
 export const predefinedModes = [
@@ -124,13 +125,13 @@ function parseUserArguments() {
 }
 
 export function app() {
-  const appMenu = getMenu();
+  const menu = { ...getUserMenu(), ...getAppMenu() };
 
   switch (USER_ARGUMENTS.mode) {
     /* Apps */
     case predefinedModes[0][0]:
     case predefinedModes[0][1]:
-      fzfLaunch(appMenu[predefinedModes[0][0]], predefinedModes[0][0]);
+      fzfLaunch(menu[predefinedModes[0][0]], predefinedModes[0][0]);
       break;
 
     /* Basic Calculator */
@@ -153,6 +154,6 @@ export function app() {
 
     /* User defined menu */
     default:
-      fzfRun(appMenu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+      fzfRun(menu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
   }
 }
