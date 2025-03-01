@@ -8,7 +8,7 @@ import {
   handleFzfExec,
 } from "./utils.js";
 
-export default function fzfChoose() {
+export default async function fzfChoose() {
   const header = `┏┳  •  ┏  ┏    
  ┃  ┓  ╋  ╋  ┓┏
 ┗┛  ┗  ┛  ┛  ┗┫
@@ -34,7 +34,7 @@ export default function fzfChoose() {
     ...predefinedModes.map((mode, i) =>
       i !== predefinedModes.length - 1 ? mode[0] : null
     ).filter(Boolean),
-    ...Object.keys(getUserMenu()),
+    ...Object.keys(await getUserMenu()),
   ].map((choice) => addBorder(choice)).join("\0");
   const fzf = new ProcessSync(
     fzfArgs,

@@ -1,32 +1,57 @@
 import { ensureDir } from "../justjs/utils.js";
 
-let userMenu;
 /**
  * Retrieves the user-specific menu from a JSON file located in the user's config directory.
  * @returns {Object} The user menu as an object, or an empty object if no menu is found or there is an error.
  */
-export default function getUserMenu() {
+let userMenu;
+export default async function getUserMenu() {
   if (userMenu) return userMenu;
-  // Define the path to the user's menu directory.
+  const userMenuFromJson = getUserMenuFromJson();
+  const userMenuFromJs = await getUserMenuFromJs();
+  userMenu = { ...userMenuFromJson, ...userMenuFromJs };
+  return userMenu;
+}
+
+let userMenu1;
+async function getUserMenuFromJs() {
+  const userMenuJsFilePath = HOME_DIR + "/.config/jiffy/menu.js";
+  const [_, err] = OS.stat(userMenuJsFilePath);
+  if (err) {
+    print(
+      "Failed to read Js menu file at " + userMenuJsFilePath +
+        ". Error code: " + err,
+    );
+    return {};
+  }
+
+  try {
+    userMenu1 = await import(userMenuJsFilePath);
+    return userMenu1.default ?? {};
+  } catch (status) {
+    STD.err.puts(
+      `${status.constructor.name}: ${status.message}\n${status.stack}`,
+    );
+    STD.exit(1);
+  }
+}
+
+let userMenu2;
+function getUserMenuFromJson() {
+  if (userMenu2) return userMenu2;
   const userMenuDirPath = HOME_DIR + "/.config/jiffy/";
 
-  // Ensure the user's menu directory exists (create it if necessary).
   ensureDir(userMenuDirPath);
 
-  // Define the full path to the user menu file.
   const userMenuFilePath = userMenuDirPath + "menu.jsonc";
 
-  // Load the user menu file content.
   const userMenuFile = STD.loadFile(userMenuFilePath);
 
-  // If the user menu file exists, try to parse it.
   if (userMenuFile) {
     try {
-      // Parse the user menu JSON content and return it.
-      userMenu = STD.parseExtJSON(userMenuFile);
-      return userMenu;
+      userMenu2 = STD.parseExtJSON(userMenuFile);
+      return userMenu2;
     } catch (_) {
-      // If there is an error parsing the menu file, throw a custom error.
       throw new SystemError(
         "Error while parsing menu.jsonc",
         `The following extensions to JSON standard are accepted:-
@@ -39,8 +64,7 @@ export default function getUserMenu() {
     - octal (0o prefix) and hexadecimal (0x prefix) numbers `,
       );
     }
-  } else print("No custom menu found.", userMenuFilePath);
+  } else print("No custom menu found at ", userMenuFilePath);
 
-  // Return an empty object if no user menu file is found.
   return {};
 }

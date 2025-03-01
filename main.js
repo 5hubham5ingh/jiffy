@@ -18,14 +18,14 @@ export const predefinedModes = [
   ["Jiffy menu", "j"],
 ];
 
-main();
+await main();
 
-function main() {
+async function main() {
   try {
     OS.ttySetRaw();
-    globalThis.USER_ARGUMENTS = parseUserArguments();
+    globalThis.USER_ARGUMENTS = await parseUserArguments();
     setCommonFzfArgs();
-    app();
+    await app();
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
     else {STD.err.puts(
@@ -40,7 +40,7 @@ function main() {
   }
 }
 
-function parseUserArguments() {
+async function parseUserArguments() {
   // Define the argument names and their corresponding flags
   const args = {
     mode: "--mode", // Defines the mode of operation
@@ -54,11 +54,12 @@ function parseUserArguments() {
     inject: "--inject", // Allows injecting custom JS code at startup
   };
 
+  const userMenu = await getUserMenu();
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
     [args.mode]: arg.str(predefinedModes[predefinedModes.length - 1][0]).enum([
       ...predefinedModes.flat(),
-      ...Object.keys(getUserMenu()),
+      ...Object.keys(userMenu),
     ])
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
@@ -115,7 +116,7 @@ function parseUserArguments() {
           ansi.style.reset,
         ),
     ))
-    .ver("1.1.0")
+    .ver("1.2.0")
     .parse();
 
   // Convert the parsed arguments into an object and return it
@@ -124,8 +125,9 @@ function parseUserArguments() {
   );
 }
 
-export function app() {
-  const menu = { ...getUserMenu(), ...getAppMenu() };
+export async function app() {
+  const userMenu = await getUserMenu();
+  const menu = { ...userMenu, ...getAppMenu() };
 
   switch (USER_ARGUMENTS.mode) {
     /* Apps */
@@ -149,7 +151,7 @@ export function app() {
     /* Jiffy Menu */
     case predefinedModes[predefinedModes.length - 1][0]:
     case predefinedModes[predefinedModes.length - 1][1]:
-      fzfChoose();
+      await fzfChoose();
       break;
 
     /* User defined menu */

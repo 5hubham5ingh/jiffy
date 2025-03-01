@@ -1,7 +1,7 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
 
-export default function fzfBc() {
+export default async function fzfBc() {
   const fzfArgs = [
     "fzf",
     `--info-command="echo {fzf:query} | bc "`, // print results
@@ -36,5 +36,5 @@ export default function fzfBc() {
       useShell: true, // Allow the use of shell commands in the fzf command
     },
   );
-  handleFzfExec(fzfBc);
+  await handleFzfExec(fzfBc);
 }

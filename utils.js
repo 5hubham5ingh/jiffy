@@ -60,7 +60,7 @@ export function removeBorder(borderedString) {
   return originalString;
 }
 
-export const handleFzfExec = (fzf) => {
+export const handleFzfExec = async (fzf) => {
   if (fzf.run() && fzf.success) {
     const stdout = removeBorder(fzf.stdout.trim()).split("###");
     if (stdout[0] === "change-preset") {
@@ -73,7 +73,7 @@ export const handleFzfExec = (fzf) => {
     } else {
       USER_ARGUMENTS.mode = stdout[0];
     }
-    app();
+    await app();
   }
 };
 

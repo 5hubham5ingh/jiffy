@@ -2,7 +2,7 @@ import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { Emojies } from "./ASCIINulSeperatedString.js";
 import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
 
-export default function fzfEmojies() {
+export default async function fzfEmojies() {
   const fzfArgs = [
     "fzf",
     "--read0",
@@ -27,5 +27,5 @@ export default function fzfEmojies() {
     },
   );
 
-  handleFzfExec(fzfEmojies);
+  await handleFzfExec(fzfEmojies);
 }
