@@ -139,7 +139,7 @@ async function parseUserArguments() {
           ansi.style.reset,
         ),
     ))
-    .ver("1.2.0")
+    .ver("1.4.0")
     .parse();
 
   // Convert the parsed arguments into an object and return it
