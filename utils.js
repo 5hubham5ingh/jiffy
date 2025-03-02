@@ -69,7 +69,6 @@ export const handleFzfExec = async (fzf) => {
     if (stdout[0] === "change-preset") {
       const currUiPreset = parseInt(USER_ARGUMENTS.preset);
       USER_ARGUMENTS.preset = `${currUiPreset >= 3 ? 1 : currUiPreset + 1}`;
-      fzfCommonArgs.push(`--query="${stdout[1]}"`);
     } else if (stdout[0] === "change-mode") {
       let selectNext = false;
       const oldMode = USER_ARGUMENTS.mode;
@@ -88,6 +87,8 @@ export const handleFzfExec = async (fzf) => {
     } else if (modes.flat().includes(stdout[0])) {
       USER_ARGUMENTS.mode = stdout[0];
     }
+    // carry over the current query to next UI preset or application's mode.
+    stdout[1] && fzfCommonArgs.push(`--query="${stdout[1]}"`);
     await app();
   }
 };
@@ -168,7 +169,7 @@ export const setCommonFzfArgs = () => {
     "--color=bg+:-1,border:cyan", // Set colors for background and border
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--bind='shift-tab:become(echo change-preset###${FZF_QUERY})'",
-    "--bind='tab:become(echo change-mode###)'",
+    "--bind='tab:become(echo change-mode###${FZF_QUERY})'",
     ...(USER_ARGUMENTS?.fzfArgs ?? []),
   );
 };

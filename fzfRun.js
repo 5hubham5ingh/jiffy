@@ -75,8 +75,8 @@ export default async function fzfRun() {
             )
               .concat("...") +
             ansi.style.reset // Truncate keywords line if it exceeds available space
-          : ansi.style.gray +
-            " : " +
+          : " : " +
+            ansi.style.gray +
             (option?.description ?? "") +
             (option?.keywords ? " ( " + option?.keywords + " )" : ""),
         ansi.style.reset,
