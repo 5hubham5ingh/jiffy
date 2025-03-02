@@ -7,18 +7,19 @@ import { ansi } from "../justjs/ansiStyle.js";
 import fzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
 import fzfEmojies from "./fzfEmojis.js";
-import { setCommonFzfArgs } from "./utils.js";
-import { getAppMenu } from "./applicationMenu.js";
+import { createShortcutNames, setCommonFzfArgs } from "./utils.js";
 
-// Pre-defined modes
-export const predefinedModes = [
-  ["Apps", "a"],
-  ["Basic calculator", "bc"],
-  ["Emojies", "e"],
-  ["Jiffy menu", "j"],
-];
+// Application modes
+export const modes = [];
 
-await main();
+try {
+  await main();
+} catch (error) {
+  STD.err.puts(
+    `${error.constructor.name}: ${error.message}\n${error.stack}`,
+  );
+  STD.exit(1);
+}
 
 async function main() {
   try {
@@ -50,17 +51,29 @@ async function parseUserArguments() {
     printCategory: "--print-category",
     fzfArgs: "--fzf-args", // Defines custom arguments for the fuzzy finder (fzf)
     refresh: "--refresh", // Flag to enable caching of the application list
-    terminal: "--terminal", // Wait specified milliseconds before exiting.
+    terminal: "--terminal",
+    modKey: "--mod-key",
     inject: "--inject", // Allows injecting custom JS code at startup
   };
 
   const userMenu = await getUserMenu();
+  const predefinedMenuItem = [
+    "Apps",
+    "Basic calculator",
+    "Emojies",
+    "Jiffy menu",
+  ];
+
+  predefinedMenuItem.push(...Object.keys(userMenu));
+  modes.push(...createShortcutNames(
+    predefinedMenuItem,
+  ));
+
   // Parse the user input arguments using `arg.parser`
   const userArguments = arg.parser({
-    [args.mode]: arg.str(predefinedModes[predefinedModes.length - 1][0]).enum([
-      ...predefinedModes.flat(),
-      ...Object.keys(userMenu),
-    ])
+    [args.mode]: arg.str(modes[3][0]).enum(
+      modes.flat(),
+    )
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
       ),
@@ -81,6 +94,13 @@ async function parseUserArguments() {
     [args.terminal]: arg.str("kitty -1 --hold").env("TERMINAL").desc(
       "Default terminal to launch terminal apps.",
     ),
+    [args.modKey]: arg.str("ctrl").enum([
+      "ctrl",
+      "alt",
+    ])
+      .desc(
+        "Mod key for shortcut key-binds.",
+      ),
     [args.inject]: arg.str().val("JS").cust(STD.evalScript).desc(
       "Inject JS code to run at startup.",
     ),
@@ -91,6 +111,7 @@ async function parseUserArguments() {
     "-c": args.printCategory, // Short form for --print-category
     "-r": args.refresh, // short form for --cache
     "-t": args.terminal,
+    "-k": args.modKey,
     "-i": args.inject, // Short form for --inject
   })
     .ex([
@@ -126,36 +147,33 @@ async function parseUserArguments() {
 }
 
 export async function app() {
-  const userMenu = await getUserMenu();
-  const menu = { ...userMenu, ...getAppMenu() };
-
   switch (USER_ARGUMENTS.mode) {
     /* Apps */
-    case predefinedModes[0][0]:
-    case predefinedModes[0][1]:
-      await fzfLaunch(menu[predefinedModes[0][0]], predefinedModes[0][0]);
+    case modes[0][0]:
+    case modes[0][1]:
+      await fzfLaunch();
       break;
 
     /* Basic Calculator */
-    case predefinedModes[1][0]:
-    case predefinedModes[1][1]:
+    case modes[1][0]:
+    case modes[1][1]:
       await fzfBc();
       break;
 
     /* Emojies picker */
-    case predefinedModes[2][0]:
-    case predefinedModes[2][1]:
+    case modes[2][0]:
+    case modes[2][1]:
       await fzfEmojies();
       break;
 
     /* Jiffy Menu */
-    case predefinedModes[predefinedModes.length - 1][0]:
-    case predefinedModes[predefinedModes.length - 1][1]:
+    case modes[3][0]:
+    case modes[3][1]:
       await fzfChoose();
       break;
 
     /* User defined menu */
     default:
-      await fzfRun(menu[USER_ARGUMENTS.mode], USER_ARGUMENTS.mode);
+      await fzfRun();
   }
 }

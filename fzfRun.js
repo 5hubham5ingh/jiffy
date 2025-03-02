@@ -1,14 +1,26 @@
 import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
+import getUserMenu from "./userMenu.js";
+import {
+  getFzfCommonArgs,
+  getKeyBinds,
+  getWindowSize,
+  handleFzfExec,
+} from "./utils.js";
 
 /**
  * @param {Array} list - The list of options to present to the user for selection.
  */
-export default async function fzfRun(list, listName) {
-  if (!list) throw list;
+export default async function fzfRun() {
+  const userMenu = await getUserMenu();
+  const keyBinds = getKeyBinds();
+  const [listName] = keyBinds.find(([mode, shortcut]) =>
+    mode === USER_ARGUMENTS.mode || shortcut === USER_ARGUMENTS.mode
+  );
+  const list = userMenu[listName];
+
   // Get the terminal window size (width and height) for formatting purposes
-  const [width] = OS.ttyGetWinSize();
+  const [width] = getWindowSize();
 
   // Define the arguments that will be passed to the `fzf` command
   const fzfArgs = [

@@ -1,6 +1,5 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { predefinedModes } from "./main.js";
-import getUserMenu from "./userMenu.js";
+import { modes } from "./main.js";
 import {
   addBorder,
   alignCenter,
@@ -30,12 +29,10 @@ export default async function fzfChoose() {
     "--border=none",
   ];
 
-  const fzfInput = [
-    ...predefinedModes.map((mode, i) =>
-      i !== predefinedModes.length - 1 ? mode[0] : null
-    ).filter(Boolean),
-    ...Object.keys(await getUserMenu()),
-  ].map((choice) => addBorder(choice)).join("\0");
+  const fzfInput = modes.map((mode, i) => i !== 3 ? mode[0] : null).filter(
+    Boolean,
+  ).map((choice) => addBorder(choice)).join("\0");
+
   const fzf = new ProcessSync(
     fzfArgs,
     {

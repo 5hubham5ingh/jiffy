@@ -1,4 +1,4 @@
-import { app, predefinedModes } from "./main.js";
+import { app, modes } from "./main.js";
 
 export function ensureDir(dir) {
   if (typeof dir !== "string") {
@@ -27,7 +27,10 @@ export function ensureDir(dir) {
   });
 }
 
-const [width, _] = OS.ttyGetWinSize();
+let windowSize;
+export const getWindowSize = () =>
+  windowSize ?? (windowSize = OS.ttyGetWinSize());
+const [width, _] = getWindowSize();
 
 export function addBorder(string) {
   const horizontalBorder = "─".repeat(width - 3);
@@ -67,7 +70,7 @@ export const handleFzfExec = async (fzf) => {
       const currUiPreset = parseInt(USER_ARGUMENTS.preset);
       USER_ARGUMENTS.preset = `${currUiPreset >= 3 ? 1 : currUiPreset + 1}`;
       fzfCommonArgs.push(`--query="${stdout[1]}"`);
-    } else if (predefinedModes.flat().includes(stdout[0])) {
+    } else if (modes.flat().includes(stdout[0])) {
       fzfCommonArgs.push(`--query=" "`);
       USER_ARGUMENTS.mode = stdout[0];
     } else {
@@ -77,22 +80,83 @@ export const handleFzfExec = async (fzf) => {
   }
 };
 
-let fzfCommonArgs;
+export function createShortcutNames(menuNames) {
+  let i = 0;
+  const shortcutMemo = new Set();
+  const result = [];
+
+  const addShortcuts = (isLower = true) => {
+    let count = 26;
+    while (count--) {
+      const currentMenuName = menuNames[i++];
+      if (!currentMenuName) break;
+      for (let j = 0; j < currentMenuName.length; j++) {
+        const currentLetter = isLower
+          ? currentMenuName[j].toLowerCase()
+          : currentMenuName[j].toUpperCase();
+        if (!shortcutMemo.has(currentLetter)) {
+          result.push([currentMenuName, currentLetter]);
+          shortcutMemo.add(currentLetter);
+          break;
+        }
+      }
+    }
+  };
+
+  // first create shortcuts using lower case letters
+  addShortcuts();
+  // then create shotcuts using capital letters
+  addShortcuts(false);
+
+  if (result.length < menuNames.length) {
+    // add the remaining names without shortcuts
+    let i = result.length;
+    while (i < menuNames.length) result.push(menuNames[i++]);
+  }
+  return result;
+}
+
+const keyBinds = [];
+export const getKeyBinds = () => {
+  if (keyBinds.length) return keyBinds;
+  switch (USER_ARGUMENTS.modKey) {
+    case "alt":
+      {
+        for (const [mode, key] of modes) {
+          if (!key) break;
+          keyBinds.push([mode, key, `alt-${key}`]);
+        }
+      }
+      break;
+    case "ctrl": {
+      for (const [mode, key] of modes) {
+        if (!key) break;
+        if (key === key.toLowerCase()) {
+          keyBinds.push([mode, key, `ctrl-${key}`]);
+        } else keyBinds.push([mode, key, `ctrl-alt-${key.toLowerCase()}`]);
+      }
+    }
+  }
+  return keyBinds;
+};
+
+const fzfCommonArgs = [];
 
 export const getFzfCommonArgs = () => {
   return fzfCommonArgs;
 };
 
 export const setCommonFzfArgs = () => {
-  fzfCommonArgs = [
+  const keyBinds = getKeyBinds();
+  for (const [_, key, keyBind] of keyBinds) {
+    fzfCommonArgs.push(`--bind='${keyBind}:become(echo ${key})'`);
+  }
+  fzfCommonArgs.push(
     "--border=rounded", // Set a rounded border for the fzf window
     "--color=bg+:-1,border:cyan", // Set colors for background and border
     "--layout=reverse", // Reverse layout (display results from bottom to top)
-    "--bind='ctrl-e:become(echo e)'",
-    "--bind='ctrl-b:become(echo bc)'",
-    "--bind='ctrl-a:become(echo a)'",
-    "--bind='ctrl-j:become(echo j)'",
-    "--bind='ctrl-space:become(echo change-preset###${FZF_QUERY})'",
+    "--bind='" + USER_ARGUMENTS.modKey +
+      "-space:become(echo change-preset###${FZF_QUERY})'",
     ...(USER_ARGUMENTS?.fzfArgs ?? []),
-  ];
+  );
 };

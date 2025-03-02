@@ -1,14 +1,18 @@
 import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
-import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
+import { getAppMenu } from "./applicationMenu.js";
+import { getFzfCommonArgs, getWindowSize, handleFzfExec } from "./utils.js";
 
 /**
  * @param {Array} list - The list of options to present to the user for selection.
  */
-export default async function fzfLaunch(list, listName) {
-  if (!list) throw list;
+export default async function fzfLaunch() {
+  const appMenu = getAppMenu();
+  const list = appMenu.Apps;
+  const listName = "Apps";
+
   // Get the terminal window size (width and height) for formatting purposes
-  const [width, height] = OS.ttyGetWinSize();
+  const [width, height] = getWindowSize();
 
   // Retrieve the icon size from the global user arguments (this will influence the display format)
   const iconSize = USER_ARGUMENTS.iconSize; // WxH
@@ -64,7 +68,7 @@ export default async function fzfLaunch(list, listName) {
     "--highlight-line", // Highlight the selected line
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
     "--header-first", // Display the header first (maintains gap between icon and query line)
-    "--bind='ctrl-r:become(jiffy -m a -r)'",
+    "--bind='tab:become(jiffy -m a -r)'",
     ...getFzfCommonArgs(),
   ];
 

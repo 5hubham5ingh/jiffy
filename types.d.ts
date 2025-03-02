@@ -7,6 +7,7 @@ export type UserArguments = {
   refresh: boolean;
   terminal: string;
   clipboard: "xclip" | "wl";
+  modKey: "ctrl" | "alt";
   inject: () => null;
   pLimit: number;
   disableNotification: boolean;

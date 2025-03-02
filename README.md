@@ -174,9 +174,9 @@ shotcut keys-
 ## Todo
 
 - Clipboard manager.
-- Keymap for changing icon size.
-- Keymap for showing keymap.
-- Dynamic shotcut keys creation
+- Keymap for changing icon size. ctrl+plus and ctrl+minus
+- Keymap for showing keymap: shift-tab
+- MaonMod + num for quick command selection
 
 ---
 
