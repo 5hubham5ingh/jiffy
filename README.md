@@ -175,8 +175,12 @@ shotcut keys-
 
 - Clipboard manager.
 - Keymap for changing icon size. ctrl+plus and ctrl+minus
-- Keymap for showing keymap: shift-tab
+- Keymap for showing keymap: MainMod + ?
 - MaonMod + num for quick command selection
+mainmod + space = refresh app.
+tab = next mode.
+shift + tab = change ui
+fix: mainmao + a
 
 ---
 

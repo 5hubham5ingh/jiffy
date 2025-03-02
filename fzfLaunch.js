@@ -68,7 +68,7 @@ export default async function fzfLaunch() {
     "--highlight-line", // Highlight the selected line
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
     "--header-first", // Display the header first (maintains gap between icon and query line)
-    "--bind='tab:become(jiffy -m a -r)'",
+    "--bind='" + USER_ARGUMENTS.modKey + "-space:become(jiffy -m a -r)'",
     ...getFzfCommonArgs(),
   ];
 
