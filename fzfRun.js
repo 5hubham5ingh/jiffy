@@ -26,7 +26,6 @@ export default async function fzfRun() {
   const fzfArgs = [
     "fzf", // Launch fzf command
     "--ansi", // Enable ANSI color sequences
-    `--header=""`, // Remove any header
     "--read0", // Use null-terminated strings for input
     "--delimiter=#", // Set delimiter for separating data
     ...["--with-nth", "-1"], // Configure last columns to display in the fuzzy search
@@ -40,7 +39,6 @@ export default async function fzfRun() {
     `--pointer=""`, // Remove the pointer symbol
     "--highlight-line", // Highlight the selected line
     "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
-    "--header-first", // Display the header first (maintains gap between icon and query line)
     ...getFzfCommonArgs(),
   ];
 

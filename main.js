@@ -8,6 +8,7 @@ import fzfBc from "./fzfBc.js";
 import fzfChoose from "./fzfChoose.js";
 import fzfEmojies from "./fzfEmojis.js";
 import { createShortcutNames, setCommonFzfArgs } from "./utils.js";
+import fzfKeymaps from "./fzfKeymaps.js";
 
 // Application modes
 export const modes = [];
@@ -62,6 +63,7 @@ async function parseUserArguments() {
     "Basic calculator",
     "Emojies",
     "Jiffy menu",
+    "Key maps",
   ];
 
   predefinedMenuItem.push(...Object.keys(userMenu));
@@ -170,6 +172,12 @@ export async function app() {
     case modes[3][0]:
     case modes[3][1]:
       await fzfChoose();
+      break;
+
+    /* Key maps */
+    case modes[4][0]:
+    case modes[4][1]:
+      await fzfKeymaps();
       break;
 
     /* User defined menu */

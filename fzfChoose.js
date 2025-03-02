@@ -23,7 +23,6 @@ export default async function fzfChoose() {
     "--marker=",
     "--pointer=",
     `--header="${alignCenter(header)}"`,
-    "--header-first",
     "--bind='enter:accept'",
     ...getFzfCommonArgs(),
     "--border=none",
