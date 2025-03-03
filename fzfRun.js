@@ -49,19 +49,20 @@ export default async function fzfRun() {
     0,
   );
 
-  // Format each option in the list with the app icon, category, keywords, name, and description
+  // Format each option in the menu
   const styledOptions = list.map((option) => ({
-    displayName: `\n` // Display the app's icon (if any)
-      .concat( // Display the description, if available
+    displayName: `\n`
+      .concat( // Display the command to be executed
         option.exec,
         "\n",
       ).concat( // Command to execute
+        "setsid ", // for double fork
         option.terminal ? `${USER_ARGUMENTS.terminal} ` : "",
         option.exec,
         "\n",
       )
-      .concat(option?.category ?? "", "\n") // Display the app's category
-      .concat( // Display the app's name and keywords, with proper formatting
+      .concat(option?.category ?? "", "\n") // Display the command's category
+      .concat( // Display the command's name and keywords, with proper formatting
         "#\n",
         ansi.style.green + option.name + ansi.style.reset +
           " ".repeat(maxNameLength - option.name?.length), // Align names by padding with spaces
@@ -87,12 +88,11 @@ export default async function fzfRun() {
     option.displayName.concat("\0") // Use null-terminated strings for fzf input
   ).join("");
 
-  // Create a new `ProcessSync` to run the `fzf` command synchronously with the formatted options
   const fzfRun = new ProcessSync(
-    fzfArgs, // Arguments for the fzf command
+    fzfArgs,
     {
-      input: optionNames, // Pass the formatted options as input to fzf
-      useShell: true, // Allow the use of shell commands in the fzf command
+      input: optionNames,
+      useShell: true,
     },
   );
 

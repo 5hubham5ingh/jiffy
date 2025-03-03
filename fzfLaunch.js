@@ -117,10 +117,10 @@ export default async function fzfLaunch() {
 
   // Create a new `ProcessSync` to run the `fzf` command synchronously with the formatted options
   const fzfRun = new ProcessSync(
-    fzfArgs, // Arguments for the fzf command
+    fzfArgs,
     {
-      input: optionNames, // Pass the formatted options as input to fzf
-      useShell: true, // Allow the use of shell commands in the fzf command
+      input: optionNames,
+      useShell: true,
     },
   );
 

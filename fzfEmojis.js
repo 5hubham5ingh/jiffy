@@ -20,10 +20,10 @@ export default async function fzfEmojies() {
   ];
 
   const fzfEmojies = new ProcessSync(
-    fzfArgs, // Arguments for the fzf command
+    fzfArgs,
     {
-      input: Emojies, // Pass the formatted options as input to fzf
-      useShell: true, // Allow the use of shell commands in the fzf command
+      input: Emojies,
+      useShell: true,
     },
   );
 

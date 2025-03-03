@@ -30,10 +30,10 @@ export default async function fzfBc() {
   }
 
   const fzfBc = new ProcessSync(
-    fzfArgs, // Arguments for the fzf command
+    fzfArgs,
     {
-      input: "", // Pass the formatted options as input to fzf
-      useShell: true, // Allow the use of shell commands in the fzf command
+      input: "",
+      useShell: true,
     },
   );
   await handleFzfExec(fzfBc);
