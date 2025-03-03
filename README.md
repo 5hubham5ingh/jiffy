@@ -21,22 +21,6 @@
 ![bc](https://github.com/user-attachments/assets/99d67870-8378-4988-8cef-38f3e16bc139)
 <br>
 
-### Dependencies
-
-#### External
-
-- **Kitty Terminal**(optional) : For displaying app icon images.
-- **fzf** : For fuzzy searching.
-
-#### GNU core utils
-
-- **bc** : Basic calculator.
-- **head** : Used in fzf's commands.
-- **tail** : Same as above.
-- **echo** : Same as above.
-- **cut** : Same as above.
-- **column** : Same as above.
-
 ## Installation
 
 - You can download the precompiled binary of Jiffy from the
@@ -67,12 +51,13 @@
 
 ## Configuration
 
-Jiffy allows you to define custom menus in a `menu.jsonc` file. This file can be
-placed in your `~/.config/jiffy/` directory. The menu follows the JSONC format,
-where you can specify different system actions like shutdown, reboot, sleep, and
-other commands.
+Jiffy allows you to define custom menus in `menu.jsonc` and `menu.js` files. These file should be
+in your `~/.config/jiffy/` directory. The menu follows the JSON format.
 
-### Example `menu.jsonc`
+### Example 
+
+
+**1. `menu.jsonc`**
 
 ```jsonc
 {
@@ -81,25 +66,21 @@ other commands.
       "name": "Shutdown",
       "exec": "shutdown -P now",
       "description": "System shutdown.",
-      "icon": "/home/ss/.config/jiffy/icons/shutdown.png"
     },
     {
       "name": "Sleep",
       "exec": "shutdown -H now",
       "description": "System sleep.",
-      "icon": "/home/ss/.config/jiffy/icons/sleep.png"
     },
     {
       "name": "Reboot",
       "exec": "shutdown -r now",
       "description": "System reboot.",
-      "icon": "/home/ss/.config/jiffy/icons/reboot.png"
     },
     {
       "name": "List scheduled shutdown.",
       "exec": "shutdown --show",
       "description": "List scheduled shutdown.",
-      "icon": "/home/ss/.config/jiffy/icons/list.png",
       "terminal": true
     }
   ]
@@ -110,6 +91,77 @@ This example defines a "Power Menu" with shutdown, reboot, and sleep options.
 The `exec` field specifies the command to run, and the `description` gives a
 brief explanation of each option.
 
+**2. `menu.js`**
+
+```javascript
+function getMenu() {
+  return {
+    "Hypr Windows": focusWindows(),
+    "Hypr keybinds": hyprKeyBinds(),
+  };
+}
+
+const hyprState = JSON.parse(await execAsync("hyprctl -j clients"));
+
+function focusWindows() {
+  return hyprState.map((window) => ({
+    name: window.class,
+    description: window.title.replace("#", "_"), // replacing # as it is the internal delimeter for fzf
+    exec: `hyprctl dispatch focuswindow address:${window.address}`,
+  }));
+}
+
+const hyprBinds = JSON.parse(await execAsync("hyprctl -j binds"));
+
+function hyprKeyBinds() {
+  const mods = generateModMaskMap();
+  return hyprBinds.map((keyBind) => ({
+    name: `${
+      (mods[keyBind.modmask] ?? [])?.join(" + ").concat(" ")
+    }${keyBind.key}`,
+    description: `${keyBind.description}`,
+    exec: `${keyBind.dispatcher} ${keyBind.arg}`,
+  }));
+
+  function generateModMaskMap() {
+    const modMaskMap = {};
+
+    function parseModMask(modmask) {
+      const modifiers = [];
+      if (modmask & 1) modifiers.push("SHIFT");
+      if (modmask & 4) modifiers.push("CTRL");
+      if (modmask & 8) modifiers.push("ALT");
+      if (modmask & 64) modifiers.push("SUPER");
+      return modifiers;
+    }
+
+    const validModifiers = [1, 4, 8, 64]; // Individual modifiers
+
+    let validMasks = [0];
+
+    for (const mod of validModifiers) {
+      const newMasks = [];
+      for (const mask of validMasks) {
+        newMasks.push(mask | mod); // Combine with existing masks
+      }
+      validMasks = [...validMasks, ...newMasks];
+    }
+
+    validMasks = validMasks.filter((mask) => mask !== 0);
+
+    for (const mask of validMasks) {
+      modMaskMap[mask] = parseModMask(mask).reverse();
+    }
+
+    return modMaskMap;
+  }
+}
+
+export default getMenu();
+```
+
+This example defines a dynamically generated menu for switching focus to another opened window and browse all key bind of `Hyprland`.
+
 ## Usage
 
 You can launch Jiffy by running the following command:
@@ -117,22 +169,6 @@ You can launch Jiffy by running the following command:
 ```bash
 jiffy [ARG] ...
 ```
-
-### Options
-
-| Option                    | Description                                                        | Possible Values                                                                  | Default            |
-| ------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- | ------------------ |
-| -m, --mode VAL            | Set the mode of commands from modes predefined in the config file. | Apps, a, Basic calculator, bc, Emojies, e, Jiffy menu, j, +menus from menu.jsonc | Jiffy menu         |
-| -s, --icon-size NUM       | App's icon cell size.                                              | Any integer                                                                      | 5                  |
-| -p, --preset VAL          | Start with UI preset.                                              | 1, 2, 3                                                                          | 1                  |
-| -x, --clipboard VAL       | Clipboard used for pasting the selected emoji.                     | Any valid clipboard command (e.g., `xsel`, `xclip`)                              | wl-copy            |
-| -c, --(no-)print-category | Print app's category.                                              | `--print-category`, `--no-print-category`                                        | `--print-category` |
-| --fzf-args VAL (+)        | Custom arguments for fzf.                                          | Any valid fzf argument                                                           |                    |
-| -r, --(no-)refresh        | Cache the application list.                                        | `--refresh`, `--no-refresh`                                                      | `--no-refresh`     |
-| -t, --terminal VAL        | Default terminal to launch terminal apps.                          | Any valid terminal command                                                       | kitty -1 --hold    |
-| -i, --inject JS           | Inject JS code to run at startup.                                  | Any valid JavaScript code                                                        |                    |
-| -h, --help                | print help                                                         |                                                                                  |                    |
-| --version                 | print version                                                      |                                                                                  |                    |
 
 #### Examples
 
@@ -154,28 +190,27 @@ jiffy [ARG] ...
    jiffy -p 2 -i 'OS.exec(["kitty", "@", "set-spacing", "margin=0"])'
    ```
 
-   This example changes the UI preset and removes the window margin by injecting
-   JavaScript.
+Run `jiffy --help` to see more options.
 
 ### Keyboard Shortcuts
 
-You can switch between any predefined modes or UI presets using following
+You can switch between any modes or UI presets using following
 shotcut keys-
 
 | Shortcut   | Action                                              |
 | ---------- | --------------------------------------------------- |
-| ctrl+space | Change UI preset                                    |
-| ctrl+e     | Emoji mode                                          |
-| ctrl+j     | Jiffy menu                                          |
-| ctrl+b     | Basic calculator                                    |
-| ctrl+a     | App launcher                                        |
-| ctrl+r     | Refresh system applications list (for app launcher) |
+| shift+tab  | Change UI preset                                    |
+| tab        | Change mode                                         |
+| mainMod+space     | Refresh application list for launcher        |
+| mainMod+k  | Show all keybinds                                   |
+
 
 ## Todo
 
 - refactor .dasktop file parsing.
-- create fzf.js for fzf command creation
-
+- create fzf.js for fzf command creation.
+- native implimentation of kitty graphic protocol.
+  
 ---
 
 Feel free to contribute or open issues if you encounter any problems or have
