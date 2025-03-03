@@ -173,10 +173,6 @@ shotcut keys-
 
 ## Todo
 
-- Clipboard manager.
-- Keymap for showing keymap: MainMod + ?
-- Custom command.js for window switching: Create a Window switching mode with list of all opened hyprland client window.
-  Selecting one window will put focus on it using hyprctl
 - refactor .dasktop file parsing.
 - create fzf.js for fzf command creation
 

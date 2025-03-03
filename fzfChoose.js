@@ -8,10 +8,10 @@ import {
 } from "./utils.js";
 
 export default async function fzfChoose() {
-  const header = `  ┏┳  •  ┏  ┏    
-   ┃  ┓  ╋  ╋  ┓┏
-  ┗┛  ┗  ┛  ┛  ┗┫
-                ┛`;
+  const header = `    ┏┳  •  ┏  ┏    
+     ┃  ┓  ╋  ╋  ┓┏
+    ┗┛  ┗  ┛  ┛  ┗┫
+                  ┛`;
 
   const fzfArgs = [
     "fzf",
@@ -26,6 +26,7 @@ export default async function fzfChoose() {
     "--bind='enter:accept'",
     ...getFzfCommonArgs(),
     "--border=none",
+    "--no-scrollbar",
   ];
 
   const fzfInput = modes.map((mode, i) => i !== 3 ? mode[0] : null).filter(
