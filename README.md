@@ -21,6 +21,10 @@
 ![bc](https://github.com/user-attachments/assets/99d67870-8378-4988-8cef-38f3e16bc139)
 <br>
 
+## Dependencies
+- **fzf** for fuzzy search.
+- **kitty terminal**(optional) for displaying app icons.
+  
 ## Installation
 
 - You can download the precompiled binary of Jiffy from the
