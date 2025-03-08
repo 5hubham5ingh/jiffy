@@ -1,4 +1,5 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
+import Fzf from "../justjs/fzf.js";
 import { modes } from "./main.js";
 import {
   addBorder,
@@ -13,21 +14,14 @@ export default async function fzfChoose() {
     ┗┛  ┗  ┛  ┛  ┗┫
                   ┛`;
 
-  const fzfArgs = [
-    "fzf",
-    "--color=16,current-fg:cyan",
-    "--separator=''",
-    "--read0",
-    "--no-info",
-    "--prompt=",
-    "--marker=",
-    "--pointer=",
-    `--header="${alignCenter(header)}"`,
-    "--bind='enter:accept'",
-    ...getFzfCommonArgs(),
-    "--border=none",
-    "--no-scrollbar",
-  ];
+  const fzfArgs = new Fzf().color("16,current-fg:cyan")
+    .separator("''").read0().noInfo()
+    .prompt("''").marker("''").pointer("''")
+    .header(`"${alignCenter(header)}"`)
+    .bind("enter:accept").border("none")
+    .noScrollbar().toArray();
+
+  fzfArgs.push(...getFzfCommonArgs());
 
   const fzfInput = modes.map((mode, i) => i !== 3 ? mode[0] : null).filter(
     Boolean,

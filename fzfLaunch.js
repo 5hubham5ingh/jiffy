@@ -1,6 +1,7 @@
 import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { getAppMenu } from "./applicationMenu.js";
+import Fzf from "../justjs/fzf.js";
 import { getFzfCommonArgs, getWindowSize, handleFzfExec } from "./utils.js";
 
 /**
@@ -44,40 +45,36 @@ export default async function fzfLaunch() {
     }
   })();
 
-  // Define the arguments that will be passed to the `fzf` command
-  const fzfArgs = [
-    "fzf", // Launch fzf command
-    "--ansi", // Enable ANSI color sequences
-    `--header=""`, // Remove any header
-    "--read0", // Use null-terminated strings for input
-    "--delimiter=#", // Set delimiter for separating data
-    ...["--with-nth", "-1"], // Configure last columns to display in the fuzzy search
-    '--separator="═"', // Use a specific separator for the output
-    ...["--info", "right"], // Display information on the right side
-    `--padding=${padding}`, // Adjust padding for display based on icon size
-    `--info-command='kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --scale-up --place=${iconPlacement}` +
-    ` "$(echo {} | head -n 1 | cut -d'#' -f1)" >>/dev/tty ` +
-    (USER_ARGUMENTS.printCategory
-      ? `&& echo {} | head -n 4 | tail -n 1'`
-      : `'`), // Custom info command for displaying icons (using `kitty icat`)
-    '--preview="echo {} | head -n 2 | tail -n 1 | column -c 1"', // Preview command to show App's description
-    "--preview-window=down,1,wrap,border-top", // Preview window settings
-    `--prompt="${listName}: "`, // Set the prompt to list name
-    `--marker=""`, // Remove the marker character
-    `--pointer=""`, // Remove the pointer symbol
-    "--highlight-line", // Highlight the selected line
-    "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
-    "--header-first", // Display the header first (maintains gap between icon and query line)
-    "--bind='" + USER_ARGUMENTS.modKey + "-space:become(jiffy -m a -r)'",
-    ...getFzfCommonArgs(),
-  ];
-
   // Calculate the maximum name length among the options in the list to properly align the display
   const maxNameLength = list.reduce(
     (length, option) =>
       option.name.length > length ? option.name.length : length,
     0,
   );
+
+  const fzfArgs = new Fzf().ansi().header("''").read0().delimiter("'#'")
+    .withNth(-1).separator("=").info("right").padding(padding)
+    .infoCommand(
+      `'kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --scale-up --place=${iconPlacement}` +
+        ` "$(echo {} | head -n 1 | cut -d'#' -f1)" >>/dev/tty ${
+          USER_ARGUMENTS.printCategory
+            ? `&& echo {} | head -n 4 | tail -n 1'`
+            : `'`
+        }`,
+    )
+    .preview('"echo {} | head -n 2 | tail -n 1 | column -c 1"').previewWindow(
+      "down,1,wrap,border-top",
+    )
+    .prompt(listName).marker("''").pointer("''").highlightLine()
+    .bind(
+      "'enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
+    )
+    .headerFirst().bind(
+      `"${USER_ARGUMENTS.modKey}-space:become(jiffy -m a -r)"`,
+    )
+    .toArray();
+
+  fzfArgs.push(...getFzfCommonArgs());
 
   // Format each option in the list with the app icon, category, keywords, name, and description
   const styledOptions = list.map((option) => ({

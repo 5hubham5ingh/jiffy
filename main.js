@@ -150,7 +150,7 @@ async function parseUserArguments() {
 
 export async function app() {
   switch (USER_ARGUMENTS.mode) {
-    /* Apps */
+    /* Launcher */
     case modes[0][0]:
     case modes[0][1]:
       await fzfLaunch();

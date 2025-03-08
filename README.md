@@ -212,9 +212,8 @@ shotcut keys-
 ## Todo
 
 - refactor .dasktop file parsing.
-- create fzf.js for fzf command creation.
-- native implimentation of kitty graphic protocol.
-  
+- icons for custom command, UI should adjust if there is no icons in the menu
+
 ---
 
 Feel free to contribute or open issues if you encounter any problems or have

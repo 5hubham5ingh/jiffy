@@ -1,5 +1,6 @@
 import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
+import Fzf from "../justjs/fzf.js";
 import getUserMenu from "./userMenu.js";
 import {
   getFzfCommonArgs,
@@ -22,25 +23,16 @@ export default async function fzfRun() {
   // Get the terminal window size (width and height) for formatting purposes
   const [width] = getWindowSize();
 
-  // Define the arguments that will be passed to the `fzf` command
-  const fzfArgs = [
-    "fzf", // Launch fzf command
-    "--ansi", // Enable ANSI color sequences
-    "--read0", // Use null-terminated strings for input
-    "--delimiter=#", // Set delimiter for separating data
-    ...["--with-nth", "-1"], // Configure last columns to display in the fuzzy search
-    '--separator="═"', // Use a specific separator for the output
-    ...["--info", "right"], // Display information on the right side
-    `--info-command="echo ${listName}"`, // Custom info command for displaying icons (using `kitty icat`)
-    '--preview="echo {} | head -n 2 | tail -n 1 | column -c 1"', // Preview command to show App's description
-    "--preview-window=down,1,wrap,border-top", // Preview window settings
-    `--prompt="> "`, // Set the prompt to list name
-    `--marker=""`, // Remove the marker character
-    `--pointer=""`, // Remove the pointer symbol
-    "--highlight-line", // Highlight the selected line
-    "--bind='enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
-    ...getFzfCommonArgs(),
-  ];
+  const fzfArgs = new Fzf().ansi().read0().delimiter("'#'").withNth(-1)
+    .separator("=").info("right").infoCommand(`"echo ${listName}"`)
+    .preview('"echo {} | head -n 2 | tail -n 1 | column -c 1"')
+    .previewWindow("down,1,wrap,border-top")
+    .prompt('"> "').marker('""').pointer('""')
+    .highlightLine()
+    .bind("'enter:execute(`echo {} | head -n 3 | tail -n 1` &)+abort'")
+    .toArray();
+
+  fzfArgs.push(...getFzfCommonArgs());
 
   // Calculate the maximum name length among the options in the list to properly align the display
   const maxNameLength = list.reduce(

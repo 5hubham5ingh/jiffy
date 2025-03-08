@@ -165,7 +165,7 @@ export const setCommonFzfArgs = () => {
     fzfCommonArgs.push(`--bind='${keyBind}:become(echo ${key})'`);
   }
   fzfCommonArgs.push(
-    "--border=rounded", // Set a rounded border for the fzf window
+    // "--border=rounded", // Set a rounded border for the fzf window
     "--color=bg+:-1,border:cyan", // Set colors for background and border
     "--layout=reverse", // Reverse layout (display results from bottom to top)
     "--bind='shift-tab:become(echo change-preset###${FZF_QUERY})'",
