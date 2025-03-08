@@ -1,14 +1,14 @@
 import * as _ from "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
-import fzfLaunch from "./fzfLaunch.js";
-import fzfRun from "./fzfRun.js";
+import launcher from "./launcher.js";
+import run from "./run.js";
 import getUserMenu from "./userMenu.js";
 import { ansi } from "../justjs/ansiStyle.js";
-import fzfBc from "./fzfBc.js";
-import fzfChoose from "./fzfChoose.js";
-import fzfEmojies from "./fzfEmojis.js";
+import basicCalculator from "./basicCalculator.js";
+import jiffyMenu from "./jiffyMenu.js";
+import emojis from "./emojis.js";
 import { createShortcutNames, setCommonFzfArgs } from "./utils.js";
-import fzfKeymaps from "./fzfKeymaps.js";
+import keymaps from "./keymaps.js";
 
 // Application modes
 export const modes = [];
@@ -61,7 +61,7 @@ async function parseUserArguments() {
   const predefinedMenuItem = [
     "Apps",
     "Basic calculator",
-    "Emojies",
+    "Emojis",
     "Jiffy menu",
     "Key maps",
   ];
@@ -153,35 +153,35 @@ export async function app() {
     /* Launcher */
     case modes[0][0]:
     case modes[0][1]:
-      await fzfLaunch();
+      await launcher();
       break;
 
     /* Basic Calculator */
     case modes[1][0]:
     case modes[1][1]:
-      await fzfBc();
+      await basicCalculator();
       break;
 
     /* Emojies picker */
     case modes[2][0]:
     case modes[2][1]:
-      await fzfEmojies();
+      await emojis();
       break;
 
     /* Jiffy Menu */
     case modes[3][0]:
     case modes[3][1]:
-      await fzfChoose();
+      await jiffyMenu();
       break;
 
     /* Key maps */
     case modes[4][0]:
     case modes[4][1]:
-      await fzfKeymaps();
+      await keymaps();
       break;
 
     /* User defined menu */
     default:
-      await fzfRun();
+      await run();
   }
 }

@@ -8,7 +8,7 @@ import {
   handleFzfExec,
 } from "./utils.js";
 
-export default async function fzfChoose() {
+export default async function JiffyMenu() {
   const header = `    ┏┳  •  ┏  ┏    
      ┃  ┓  ╋  ╋  ┓┏
     ┗┛  ┗  ┛  ┛  ┗┫
@@ -27,7 +27,7 @@ export default async function fzfChoose() {
     Boolean,
   ).map((choice) => addBorder(choice)).join("\0");
 
-  const fzf = new ProcessSync(
+  const JiffyMenu = new ProcessSync(
     fzfArgs,
     {
       input: fzfInput,
@@ -35,5 +35,5 @@ export default async function fzfChoose() {
     },
   );
 
-  await handleFzfExec(fzf);
+  await handleFzfExec(JiffyMenu);
 }

@@ -7,7 +7,7 @@ import { getFzfCommonArgs, getWindowSize, handleFzfExec } from "./utils.js";
 /**
  * @param {Array} list - The list of options to present to the user for selection.
  */
-export default async function fzfLaunch() {
+export default async function Launcher() {
   const appMenu = getAppMenu();
   const list = appMenu.Apps;
   const listName = "Apps";
@@ -113,7 +113,7 @@ export default async function fzfLaunch() {
   ).join("");
 
   // Create a new `ProcessSync` to run the `fzf` command synchronously with the formatted options
-  const fzfRun = new ProcessSync(
+  const launcher = new ProcessSync(
     fzfArgs,
     {
       input: optionNames,
@@ -121,5 +121,5 @@ export default async function fzfLaunch() {
     },
   );
 
-  await handleFzfExec(fzfRun);
+  await handleFzfExec(launcher);
 }

@@ -12,7 +12,7 @@ import {
 /**
  * @param {Array} list - The list of options to present to the user for selection.
  */
-export default async function fzfRun() {
+export default async function Run() {
   const userMenu = await getUserMenu();
   const keyBinds = getKeyBinds();
   const [listName] = keyBinds.find(([mode, shortcut]) =>

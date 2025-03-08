@@ -3,7 +3,7 @@ import { Emojies } from "./ASCIINulSeperatedString.js";
 import Fzf from "../justjs/fzf.js";
 import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
 
-export default async function fzfEmojies() {
+export default async function Emojis() {
   const fzfArgs = new Fzf().read0()
     .infoCommand('"echo {} | head -n 2 | tail -n 1"')
     .preview('"echo {} | head -n 3 | tail -n 1"').withNth(1)
@@ -16,7 +16,7 @@ export default async function fzfEmojies() {
 
   fzfArgs.push(...getFzfCommonArgs());
 
-  const fzfEmojies = new ProcessSync(
+  const emojiesFzf = new ProcessSync(
     fzfArgs,
     {
       input: Emojies,
@@ -24,5 +24,5 @@ export default async function fzfEmojies() {
     },
   );
 
-  await handleFzfExec(fzfEmojies);
+  await handleFzfExec(emojiesFzf);
 }
