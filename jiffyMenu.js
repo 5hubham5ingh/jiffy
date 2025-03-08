@@ -4,8 +4,8 @@ import { modes } from "./main.js";
 import {
   addBorder,
   alignCenter,
-  getFzfCommonArgs,
   handleFzfExec,
+  setCommonFzfArgs,
 } from "./utils.js";
 
 export default async function JiffyMenu() {
@@ -19,16 +19,18 @@ export default async function JiffyMenu() {
     .prompt("''").marker("''").pointer("''")
     .header(`"${alignCenter(header)}"`)
     .bind("enter:accept").border("none")
-    .noScrollbar().toArray();
+    .noScrollbar();
 
-  fzfArgs.push(...getFzfCommonArgs());
+  setCommonFzfArgs(fzfArgs);
+
+  fzfArgs.border("none");
 
   const fzfInput = modes.map((mode, i) => i !== 3 ? mode[0] : null).filter(
     Boolean,
   ).map((choice) => addBorder(choice)).join("\0");
 
   const JiffyMenu = new ProcessSync(
-    fzfArgs,
+    fzfArgs.toArray(),
     {
       input: fzfInput,
       useShell: true,

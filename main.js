@@ -7,7 +7,7 @@ import { ansi } from "../justjs/ansiStyle.js";
 import basicCalculator from "./basicCalculator.js";
 import jiffyMenu from "./jiffyMenu.js";
 import emojis from "./emojis.js";
-import { createShortcutNames, setCommonFzfArgs } from "./utils.js";
+import { createShortcutNames } from "./utils.js";
 import keymaps from "./keymaps.js";
 
 // Application modes
@@ -26,7 +26,6 @@ async function main() {
   try {
     OS.ttySetRaw();
     globalThis.USER_ARGUMENTS = await parseUserArguments();
-    setCommonFzfArgs();
     await app();
   } catch (error) {
     if (error instanceof SystemError) error.log(true);

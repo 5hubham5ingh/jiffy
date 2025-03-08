@@ -2,7 +2,7 @@ import { ansi } from "../justjs/ansiStyle.js";
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { getAppMenu } from "./applicationMenu.js";
 import Fzf from "../justjs/fzf.js";
-import { getFzfCommonArgs, getWindowSize, handleFzfExec } from "./utils.js";
+import { getWindowSize, handleFzfExec, setCommonFzfArgs } from "./utils.js";
 
 /**
  * @param {Array} list - The list of options to present to the user for selection.
@@ -71,10 +71,9 @@ export default async function Launcher() {
     )
     .headerFirst().bind(
       `"${USER_ARGUMENTS.modKey}-space:become(jiffy -m a -r)"`,
-    )
-    .toArray();
+    );
 
-  fzfArgs.push(...getFzfCommonArgs());
+  setCommonFzfArgs(fzfArgs);
 
   // Format each option in the list with the app icon, category, keywords, name, and description
   const styledOptions = list.map((option) => ({
@@ -114,7 +113,7 @@ export default async function Launcher() {
 
   // Create a new `ProcessSync` to run the `fzf` command synchronously with the formatted options
   const launcher = new ProcessSync(
-    fzfArgs,
+    fzfArgs.toArray(),
     {
       input: optionNames,
       useShell: true,

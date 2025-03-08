@@ -1,6 +1,6 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import Fzf from "../justjs/fzf.js";
-import { getFzfCommonArgs, getKeyBinds, handleFzfExec } from "./utils.js";
+import { getKeyBinds, handleFzfExec, setCommonFzfArgs } from "./utils.js";
 
 export default async function KeyMaps() {
   const keyMaps = getKeyBinds()
@@ -24,12 +24,12 @@ export default async function KeyMaps() {
   ).join("\0");
 
   const fzfArgs = new Fzf().prompt("'Keybinds: '").read0().noInfo()
-    .marker("''").pointer("''").toArray();
+    .marker("''").pointer("''");
 
-  fzfArgs.push(...getFzfCommonArgs());
+  setCommonFzfArgs(fzfArgs);
 
   const fzfKeymaps = new ProcessSync(
-    fzfArgs,
+    fzfArgs.toArray(),
     {
       input: keyMapsStr,
       useShell: true,

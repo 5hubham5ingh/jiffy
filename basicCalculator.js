@@ -1,6 +1,6 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import Fzf from "../justjs/fzf.js";
-import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
+import { handleFzfExec, setCommonFzfArgs } from "./utils.js";
 
 export default async function BasicCalculator() {
   const fzfArgs = new Fzf().infoCommand('"echo {fzf:query} | bc "')
@@ -24,11 +24,10 @@ export default async function BasicCalculator() {
       break;
   }
 
-  const fzfArgsArr = fzfArgs.toArray();
-  fzfArgsArr.push(...getFzfCommonArgs());
+  setCommonFzfArgs(fzfArgs);
 
   const bc = new ProcessSync(
-    fzfArgsArr,
+    fzfArgs.toArray(),
     {
       input: "",
       useShell: true,

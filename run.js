@@ -3,10 +3,10 @@ import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import Fzf from "../justjs/fzf.js";
 import getUserMenu from "./userMenu.js";
 import {
-  getFzfCommonArgs,
   getKeyBinds,
   getWindowSize,
   handleFzfExec,
+  setCommonFzfArgs,
 } from "./utils.js";
 
 /**
@@ -29,10 +29,9 @@ export default async function Run() {
     .previewWindow("down,1,wrap,border-top")
     .prompt('"> "').marker('""').pointer('""')
     .highlightLine()
-    .bind("'enter:execute(`echo {} | head -n 3 | tail -n 1` &)+abort'")
-    .toArray();
+    .bind("'enter:execute(`echo {} | head -n 3 | tail -n 1` &)+abort'");
 
-  fzfArgs.push(...getFzfCommonArgs());
+  setCommonFzfArgs(fzfArgs);
 
   // Calculate the maximum name length among the options in the list to properly align the display
   const maxNameLength = list.reduce(
@@ -81,7 +80,7 @@ export default async function Run() {
   ).join("");
 
   const fzfRun = new ProcessSync(
-    fzfArgs,
+    fzfArgs.toArray(),
     {
       input: optionNames,
       useShell: true,

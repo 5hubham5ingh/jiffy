@@ -1,7 +1,7 @@
 import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import { Emojies } from "./ASCIINulSeperatedString.js";
 import Fzf from "../justjs/fzf.js";
-import { getFzfCommonArgs, handleFzfExec } from "./utils.js";
+import { handleFzfExec, setCommonFzfArgs } from "./utils.js";
 
 export default async function Emojis() {
   const fzfArgs = new Fzf().read0()
@@ -11,13 +11,12 @@ export default async function Emojis() {
     .info("right").color("16,border:cyan").query("' '").prompt("''")
     .bind(
       `"enter:execute-silent(echo {} | head -n 1 | cut -d ' ' -f 1 | ${USER_ARGUMENTS.clipboard})"`,
-    )
-    .toArray();
+    );
 
-  fzfArgs.push(...getFzfCommonArgs());
+  setCommonFzfArgs(fzfArgs);
 
   const emojiesFzf = new ProcessSync(
-    fzfArgs,
+    fzfArgs.toArray(),
     {
       input: Emojies,
       useShell: true,

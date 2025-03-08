@@ -1,3 +1,4 @@
+import Fzf from "../justjs/fzf.js";
 import { app, modes } from "./main.js";
 
 export function ensureDir(dir) {
@@ -153,23 +154,23 @@ export const getKeyBinds = () => {
   return keyBinds;
 };
 
-const fzfCommonArgs = [];
-
-export const getFzfCommonArgs = () => {
-  return fzfCommonArgs;
-};
-
-export const setCommonFzfArgs = () => {
+/**
+ * Sets common fzf arguments.
+ * @param {Fzf} fzfArgs - The Fzf instance to modify.
+ * @returns {Fzf} The modified Fzf instance.
+ */
+export const setCommonFzfArgs = (fzfArgs) => {
+  if (!fzfArgs) throw Error("fzfArgs undefined");
   const keyBinds = getKeyBinds();
   for (const [_, key, keyBind] of keyBinds) {
-    fzfCommonArgs.push(`--bind='${keyBind}:become(echo ${key})'`);
+    fzfArgs.bind(`'${keyBind}:become(echo ${key})'`);
   }
-  fzfCommonArgs.push(
-    // "--border=rounded", // Set a rounded border for the fzf window
-    "--color=bg+:-1,border:cyan", // Set colors for background and border
-    "--layout=reverse", // Reverse layout (display results from bottom to top)
-    "--bind='shift-tab:become(echo change-preset###${FZF_QUERY})'",
-    "--bind='tab:become(echo change-mode###${FZF_QUERY})'",
-    ...(USER_ARGUMENTS?.fzfArgs ?? []),
-  );
+
+  fzfArgs.border("rounded").color("bg+:-1,border:cyan").layout("reverse").bind(
+    "'shift-tab:become(echo change-preset###${FZF_QUERY})'",
+  )
+    .bind("'tab:become(echo change-mode###${FZF_QUERY})'");
+
+  (USER_ARGUMENTS?.fzfArgs ?? [])
+    .forEach((userDefinedFzfArg) => fzfArgs.custom(userDefinedFzfArg));
 };
