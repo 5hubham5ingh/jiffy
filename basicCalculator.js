@@ -26,6 +26,8 @@ export default async function BasicCalculator() {
 
   setCommonFzfArgs(fzfArgs);
 
+  fzfArgs.separator("''");
+
   const bc = new ProcessSync(
     fzfArgs.toArray(),
     {

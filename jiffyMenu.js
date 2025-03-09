@@ -15,7 +15,7 @@ export default async function JiffyMenu() {
                   ┛`;
 
   const fzfArgs = new Fzf().color("16,current-fg:cyan")
-    .separator("''").read0().noInfo()
+    .read0().noInfo()
     .prompt("''").marker("''").pointer("''")
     .header(`"${alignCenter(header)}"`)
     .bind("enter:accept").border("none")
@@ -23,7 +23,7 @@ export default async function JiffyMenu() {
 
   setCommonFzfArgs(fzfArgs);
 
-  fzfArgs.border("none");
+  fzfArgs.border("none").separator("''");
 
   const fzfInput = modes.map((mode, i) => i !== 3 ? mode[0] : null).filter(
     Boolean,

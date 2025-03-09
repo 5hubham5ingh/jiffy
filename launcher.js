@@ -53,7 +53,7 @@ export default async function Launcher() {
   );
 
   const fzfArgs = new Fzf().ansi().header("''").read0().delimiter("'#'")
-    .withNth(-1).separator("=").info("right").padding(padding)
+    .withNth(-1).info("right").padding(padding)
     .infoCommand(
       `'kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --scale-up --place=${iconPlacement}` +
         ` "$(echo {} | head -n 1 | cut -d'#' -f1)" >>/dev/tty ${
@@ -65,7 +65,7 @@ export default async function Launcher() {
     .preview('"echo {} | head -n 2 | tail -n 1 | column -c 1"').previewWindow(
       "down,1,wrap,border-top",
     )
-    .prompt(listName).marker("''").pointer("''").highlightLine()
+    .prompt(`"${listName}: "`).marker("''").pointer("''").highlightLine()
     .bind(
       "'enter:execute(`echo {} | head -n 3 | tail -n 1` > /dev/null 2>&1 &)+abort'",
     )

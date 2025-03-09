@@ -169,7 +169,7 @@ export const setCommonFzfArgs = (fzfArgs) => {
   fzfArgs.border("rounded").color("bg+:-1,border:cyan").layout("reverse").bind(
     "'shift-tab:become(echo change-preset###${FZF_QUERY})'",
   )
-    .bind("'tab:become(echo change-mode###${FZF_QUERY})'");
+    .separator("═").bind("'tab:become(echo change-mode###${FZF_QUERY})'");
 
   (USER_ARGUMENTS?.fzfArgs ?? [])
     .forEach((userDefinedFzfArg) => fzfArgs.custom(userDefinedFzfArg));

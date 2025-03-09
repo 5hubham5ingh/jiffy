@@ -24,7 +24,7 @@ export default async function Run() {
   const [width] = getWindowSize();
 
   const fzfArgs = new Fzf().ansi().read0().delimiter("'#'").withNth(-1)
-    .separator("=").info("right").infoCommand(`"echo ${listName}"`)
+    .info("right").infoCommand(`"echo ${listName}"`)
     .preview('"echo {} | head -n 2 | tail -n 1 | column -c 1"')
     .previewWindow("down,1,wrap,border-top")
     .prompt('"> "').marker('""').pointer('""')
