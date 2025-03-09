@@ -211,7 +211,6 @@ shotcut keys-
 
 ## Todo
 
-- refactor .dasktop file parsing.
 - icons for custom command, UI should adjust if there is no icons in the menu
 
 ---
