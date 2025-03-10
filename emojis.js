@@ -10,7 +10,7 @@ export default async function Emojis() {
     .delimiter('"\n"').previewWindow("down,1,wrap,border-top")
     .info("right").color("16,border:cyan").query("' '").prompt("''")
     .bind(
-      `"enter:execute-silent(echo {} | head -n 1 | cut -d ' ' -f 1 | ${USER_ARGUMENTS.clipboard})"`,
+      `"enter:execute-silent(echo {} | head -n 1 | cut -d ' ' -f 1 | ${USER_ARGUMENTS.clipboard})+abort"`,
     );
 
   setCommonFzfArgs(fzfArgs);

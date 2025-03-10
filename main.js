@@ -13,14 +13,7 @@ import keymaps from "./keymaps.js";
 // Application modes
 export const modes = [];
 
-try {
-  await main();
-} catch (error) {
-  STD.err.puts(
-    `${error.constructor.name}: ${error.message}\n${error.stack}`,
-  );
-  STD.exit(1);
-}
+await main();
 
 async function main() {
   try {
