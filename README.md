@@ -208,7 +208,29 @@ shotcut keys-
 | mainMod+space     | Refresh application list for launcher        |
 | mainMod+k  | Show all keybinds                                   |
 
+## Miscellaneous
+**Config for hyprland**
 
+```text
+$applicationMenu = kitty -1 -o allow_remote_control=yes --class=applicationMenu --title=applicationMenu -o background_opacity=$overlay_window_opacity jiffy -x wl-copy -i 'OS.exec(["kitty", "@", "set-spacing", "margin=0"])' -r
+
+bindd = $mainMod, Return, Launch application menu, exec, $applicationMenu
+
+windowrulev2 = float, title:^(applicationMenu)$ 
+windowrulev2 = center 1, title:^(applicationMenu)$
+windowrulev2 = size 1390 410, title:^(applicationMenu)$ 
+windowrulev2 = animation slide up, title:^(applicationMenu)$
+windowrulev2 = bordersize 0, title:^(applicationMenu)$
+windowrulev2 = rounding 10, title:^(applicationMenu)$
+windowrulev2 = dimaround, title:^(applicationMenu)$
+windowrulev2 = pin, title:^(applicationMenu)$
+windowrulev2 = stayfocused, title:^(applicationMenu)$
+```
+**Config for kitty**
+
+```test
+map alt+enter launch --type=overlay jiffy -t 'kitty -1 --hold'
+```
 ## Todo
 
 - icons for custom command, UI should adjust if there is no icons in the menu
