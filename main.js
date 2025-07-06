@@ -12,25 +12,43 @@ import keymaps from "./keymaps.js";
 
 // Application modes
 export const modes = [];
+let exitStatus = 0;
+const lockFile = "/tmp/jiffy.lock";
+let lockFileFd = null;
 
 await main();
 
 async function main() {
   try {
-    OS.ttySetRaw();
     globalThis.USER_ARGUMENTS = await parseUserArguments();
+    if (USER_ARGUMENTS.singleInstance) {
+      lockFileFd = OS.open(
+        lockFile,
+        OS.O_CREAT | OS.O_EXCL | OS.O_WRONLY,
+        0o600,
+      );
+      if (lockFileFd < 0) {
+        throw new SystemError("Failed to start", "Already running.");
+      }
+    }
+    OS.ttySetRaw();
     await app();
   } catch (error) {
     if (error instanceof SystemError) error.log(true);
-    else {STD.err.puts(
-        `State:\n${
-          JSON.stringify(USER_ARGUMENTS, null, 2)
-        }\n${error.constructor.name}: ${error.message}\n${error.stack}`,
-      );}
-    STD.exit(1);
+    else {
+      STD.err.puts(
+        `${error?.constructor?.name}: ${error?.message}\n${error?.stack}`,
+      );
+      STD.err.puts(USER_ARGUMENTS);
+    }
+    exitStatus = 1;
   } finally {
+    if (lockFileFd && lockFileFd > 0) {
+      OS.close(lockFileFd);
+      OS.remove(lockFile);
+    }
     print(ansi.style.reset);
-    STD.exit(0);
+    STD.exit(exitStatus);
   }
 }
 
@@ -38,6 +56,7 @@ async function parseUserArguments() {
   // Define the argument names and their corresponding flags
   const args = {
     mode: "--mode", // Defines the mode of operation
+    singleInstance: "--single-instance",
     iconSize: "--icon-size", // Defines the icon size
     preset: "--preset", // Defines the UI preset number
     clipboard: "--clipboard",
@@ -71,6 +90,7 @@ async function parseUserArguments() {
       .desc(
         "Set the mode of commands from modes predefined in the config file.",
       ),
+    [args.singleInstance]: arg.flag().desc("Ensure single instance."),
     [args.iconSize]: arg.num(5).min(0).desc("App's icon cell size."),
     [args.preset]: arg.str("1").enum(["1", "2", "3"]).desc(
       "Start with UI preset.",
@@ -99,6 +119,7 @@ async function parseUserArguments() {
       "Inject JS code to run at startup.",
     ),
     "-m": args.mode, // Short form for --mode
+    "-1": args.singleInstance, // Ensures single instance of the app
     "-s": args.iconSize, // Short form for --icon-size
     "-p": args.preset, // Short form for --preset
     "-x": args.clipboard, // Short form for --clipboard
