@@ -98,34 +98,43 @@ brief explanation of each option.
 **2. `menu.js`**
 
 ```javascript
-function getMenu() {
-  return {
-    "Hypr Windows": focusWindows(),
-    "Hypr keybinds": hyprKeyBinds(),
-  };
-}
+let _focusWindowsCache = null;
+export default {
+  "Hypr Windows": await getHyprWindows(), // executes on jiffy startup
 
-const hyprState = JSON.parse(await execAsync("hyprctl -j clients"));
+  get "Hypr keybinds"() {
+    return getHyprlandKeybinds(); // executes on menu access
+  },
+};
 
-function focusWindows() {
-  return hyprState.map((window) => ({
+async function getHyprWindows() {
+  if (_focusWindowsCache) return _focusWindowsCache;
+  const hyprState = JSON.parse(
+    await execAsync(["hyprctl", "-j", "clients"]),
+  );
+  _focusWindowsCache = hyprState.map((window) => ({
     name: window.class,
-    description: window.title.replace("#", "_"), // replacing # as it is the internal delimeter for fzf
+    description: window.title.replace("#", "_"),
     exec: `hyprctl dispatch focuswindow address:${window.address}`,
   }));
+  return _focusWindowsCache;
 }
 
-const hyprBinds = JSON.parse(await execAsync("hyprctl -j binds"));
-
-function hyprKeyBinds() {
+let _hyprKeyBindsCache = null;
+function getHyprlandKeybinds() {
+  if (_hyprKeyBindsCache) return _hyprKeyBindsCache;
+  const hyprBinds = JSON.parse(
+    exec(["hyprctl", "-j", "binds"]),
+  );
   const mods = generateModMaskMap();
-  return hyprBinds.map((keyBind) => ({
+  _hyprKeyBindsCache = hyprBinds.map((keyBind) => ({
     name: `${
-      (mods[keyBind.modmask] ?? [])?.join(" + ").concat(" ")
+      (mods[keyBind.modmask] ?? []).join(" + ").concat(" ")
     }${keyBind.key}`,
-    description: `${keyBind.description}`,
+    description: keyBind.description,
     exec: `${keyBind.dispatcher} ${keyBind.arg}`,
   }));
+  return _hyprKeyBindsCache;
 
   function generateModMaskMap() {
     const modMaskMap = {};
@@ -139,14 +148,13 @@ function hyprKeyBinds() {
       return modifiers;
     }
 
-    const validModifiers = [1, 4, 8, 64]; // Individual modifiers
-
+    const validModifiers = [1, 4, 8, 64];
     let validMasks = [0];
 
     for (const mod of validModifiers) {
       const newMasks = [];
       for (const mask of validMasks) {
-        newMasks.push(mask | mod); // Combine with existing masks
+        newMasks.push(mask | mod);
       }
       validMasks = [...validMasks, ...newMasks];
     }
@@ -160,8 +168,6 @@ function hyprKeyBinds() {
     return modMaskMap;
   }
 }
-
-export default getMenu();
 ```
 
 This example defines a dynamically generated menu for switching focus to another opened window and browse all key bind of `Hyprland`.
