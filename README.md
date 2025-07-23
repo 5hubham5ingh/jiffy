@@ -105,6 +105,23 @@ export default {
   get "Hypr keybinds"() {
     return getHyprlandKeybinds(); // executes on menu access
   },
+
+  get "Binaries"() {
+    const result = []
+    const paths = STD.getenv("PATH")?.split(':')
+
+    for (const path of paths) {
+      const bins = OS.readdir(path)[0].filter(name => name !== '.' && name !== '..')
+      for (const bin of bins) {
+        result.push({
+          name: bin,
+          description: `Location: '${path}'`,
+          exec: bin
+        })
+      }
+    }
+    return result;
+  }
 };
 
 async function getHyprWindows() {
