@@ -1,4 +1,4 @@
-import * as _ from "../justjs/globalConstants.js";
+import "../justjs/globalConstants.js";
 import arg from "../qjs-ext-lib/src/arg.js";
 import launcher from "./launcher.js";
 import run from "./run.js";
