@@ -209,7 +209,7 @@ const showKeybinds = () => {
 
   const renderCurrentLine = () => {
     const styledChunks = currentLine.map(item =>
-      ` ${ansi.bgHex('#b3b3b3')}${ansi.hex('#000000')}${ansi.style.bold}${item}${ansi.style.reset} `
+      ` ${ansi.bgHex('#b3b3b3')}${ansi.hex('#000000')}${ansi.style.bold} ${item} ${ansi.style.reset} `
     )
     const lineStr = styledChunks.join('')
     const visibleLength = lineStr.replace(/\x1b\[[0-9;]*m/g, '').length
@@ -221,7 +221,7 @@ const showKeybinds = () => {
   for (const keyBind of keyDescriptions) {
     const testLine = [...currentLine, keyBind]
     const testStyled = testLine.map(item =>
-      ` ${ansi.bgHex('#b3b3b3')}${ansi.hex('#000000')}${ansi.style.bold}${item}${ansi.style.reset} `
+      ` ${ansi.bgHex('#b3b3b3')}${ansi.hex('#000000')}${ansi.style.bold} ${item} ${ansi.style.reset} `
     ).join('')
     const testVisibleLength = testStyled.replace(/\x1b\[[0-9;]*m/g, '').length
 
@@ -235,7 +235,7 @@ const showKeybinds = () => {
   if (currentLine.length > 0) renderCurrentLine()
 
   print("\n")
-  view.forEach(printf)
+  view.forEach(l => print(l))
   print("\n")
 }
 function createBorderLine(borderChar, length) {
