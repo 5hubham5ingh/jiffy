@@ -21,13 +21,19 @@
 ![bc](https://github.com/user-attachments/assets/99d67870-8378-4988-8cef-38f3e16bc139)
 <br>
 
+**Color picker**
+<img height="636" alt="2025-08-03-235626_hyprshot" src="https://github.com/user-attachments/assets/40cb4423-a6b8-4022-b222-d921568c3757" />
+
 ## Dependencies
 - **fzf** for fuzzy search.
 - **kitty terminal**(optional) for displaying app icons.
   
 ## Installation
-
-- You can download the precompiled binary of Jiffy from the
+- Quick download: Run
+  ```bash
+  sudo curl -sL $(curl -s https://api.github.com/repos/5hubham5ingh/jiffy/releases/latest | grep -Po '"browser_download_url": "\K[^"]+' | grep jiffy) | tar -xz && sudo mv jiffy /usr/bin/
+  ```
+- Or, you can download the precompiled binary of Jiffy from the
   [GitHub Releases page](https://github.com/5hubham5ingh/jiffy/releases).
 
 - Move the binary to a directory included in your system's `PATH` (e.g.,
