@@ -9,6 +9,7 @@ import jiffyMenu from "./jiffyMenu.js";
 import emojis from "./emojis.js";
 import { createShortcutNames } from "./utils.js";
 import keymaps from "./keymaps.js";
+import { colorPicker } from "./colours.js";
 
 // Application modes
 export const modes = [];
@@ -16,6 +17,14 @@ let exitStatus = 0;
 const lockFile = "/tmp/jiffy.lock";
 let lockFileFd = null;
 
+export const predefinedMenuItem = [
+  "Apps",
+  "Basic calculator",
+  "Emojis",
+  "Jiffy menu",
+  "Colors",
+  "Key maps",
+];
 await main();
 
 async function main() {
@@ -69,13 +78,6 @@ async function parseUserArguments() {
   };
 
   const userMenu = await getUserMenu();
-  const predefinedMenuItem = [
-    "Apps",
-    "Basic calculator",
-    "Emojis",
-    "Jiffy menu",
-    "Key maps",
-  ];
 
   predefinedMenuItem.push(...Object.keys(userMenu));
   modes.push(...createShortcutNames(
@@ -152,7 +154,7 @@ async function parseUserArguments() {
           ansi.style.reset,
         ),
     ))
-    .ver("1.5.0")
+    .ver("1.6.0")
     .parse();
 
   // Convert the parsed arguments into an object and return it
@@ -187,9 +189,15 @@ export async function app() {
       await jiffyMenu();
       break;
 
-    /* Key maps */
+    /* Color picker */
     case modes[4][0]:
     case modes[4][1]:
+      await colorPicker();
+      break;
+
+    /* Key maps */
+    case modes[5][0]:
+    case modes[5][1]:
       await keymaps();
       break;
 
