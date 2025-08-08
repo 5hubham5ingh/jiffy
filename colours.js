@@ -11,7 +11,14 @@ import { ProcessSync } from "../qjs-ext-lib/src/process.js"
 const SELECTED_MODE = { rgb: 'rgb', hsv: 'hsv', hex: 'hex', hsl: 'hsl' }
 const SELECTED_SECTION = { hues: 'hues', saturations: 'saturations', values: 'values', result: 'result' }
 const BORDER_CHARS = {
-  double: { x: "═", y: "║", tl: "╔", tr: "╗", bl: "╚", br: "╝" },
+  double: {
+    get x() {
+      const { r, g, b } = hsvToRgb(hue, 100, 100)
+      const hexColor = rgbToHex(r, g, b)
+      const selectedColor = ansi.hex(hexColor)
+      return selectedColor + "═" + ansi.style.reset;
+    }, y: "║", tl: "╔", tr: "╗", bl: "╚", br: "╝"
+  },
   rounded: { x: "─", y: "│", tl: "╭", tr: "╮", bl: "╰", br: "╯" },
 }
 
@@ -175,12 +182,15 @@ export async function colorPicker() {
   }
 }
 
+// TODO: 1: fix result preview when terminalWidth > displayColorSections width.
+//       2: Colour border according to the selected colour
 function renderUI() {
   printf(cursorTo(0, 0))
   // const topBorder = BORDER_CHARS.rounded.tl + BORDER_CHARS.rounded.x.repeat(terminalWidth - 2) + BORDER_CHARS.rounded.tr
   // printf(topBorder)
   generateHues().forEach(printf)
   displayColorSections().forEach(printf)
+  printf(ansi.cursor.back(terminalWidth))
   printf(generateResultsView())
 }
 
