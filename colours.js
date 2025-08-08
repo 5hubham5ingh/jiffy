@@ -10,17 +10,6 @@ import { ProcessSync } from "../qjs-ext-lib/src/process.js"
 
 const SELECTED_MODE = { rgb: 'rgb', hsv: 'hsv', hex: 'hex', hsl: 'hsl' }
 const SELECTED_SECTION = { hues: 'hues', saturations: 'saturations', values: 'values', result: 'result' }
-const BORDER_CHARS = {
-  double: {
-    get x() {
-      const { r, g, b } = hsvToRgb(hue, 100, 100)
-      const hexColor = rgbToHex(r, g, b)
-      const selectedColor = ansi.hex(hexColor)
-      return selectedColor + "═" + ansi.style.reset;
-    }, y: "║", tl: "╔", tr: "╗", bl: "╚", br: "╝"
-  },
-  rounded: { x: "─", y: "│", tl: "╭", tr: "╮", bl: "╰", br: "╯" },
-}
 
 const state = {
   selectedHue: 0,
@@ -35,6 +24,33 @@ const state = {
   },
   showKeybinds: true
 }
+
+const getColoredBorderChar = (char) => {
+  const { r, g, b } = hsvToRgb(state.selectedColor.h, state.selectedColor.s, state.selectedColor.v);
+  const hexColor = rgbToHex(r, g, b);
+  const selectedColor = ansi.hex(hexColor);
+  return selectedColor + char + ansi.style.reset;
+};
+
+const BORDER_CHARS = {
+  double: {
+    get x() { return getColoredBorderChar("═"); },
+    get y() { return getColoredBorderChar("║"); },
+    get tl() { return getColoredBorderChar("╔"); },
+    get tr() { return getColoredBorderChar("╗"); },
+    get bl() { return getColoredBorderChar("╚"); },
+    get br() { return getColoredBorderChar("╝"); }
+  },
+  rounded: {
+    get x() { return getColoredBorderChar("─"); },
+    get y() { return getColoredBorderChar("│"); },
+    get tl() { return getColoredBorderChar("╭"); },
+    get tr() { return getColoredBorderChar("╮"); },
+    get bl() { return getColoredBorderChar("╰"); },
+    get br() { return getColoredBorderChar("╯"); }
+  },
+};
+
 
 const [terminalWidth, _terminalHeight] = ttyGetWinSize()
 
