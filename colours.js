@@ -2,11 +2,11 @@ import { ansi } from "../justjs/ansiStyle.js"
 import { hsvToRgb, rgbToHex, rgbToHsl } from "../justjs/color.js"
 import { printf } from "std"
 import { ttyGetWinSize } from "../qjs-ext-lib/src/os.js"
-import { Border, style } from "../justjs/style.js"
 import { handleKeysPress, keySequences } from "../justjs/terminal.js"
 import { clearTerminal, cursorHide, cursorShow, cursorTo } from "../justjs/cursor.js"
 import { app, predefinedMenuItem } from "./main.js"
 import { ProcessSync } from "../qjs-ext-lib/src/process.js"
+import { addCustomeBorder, stripStyle } from "./utils.js"
 
 const SELECTED_MODE = { rgb: 'rgb', hsv: 'hsv', hex: 'hex', hsl: 'hsl' }
 const SELECTED_SECTION = { hues: 'hues', saturations: 'saturations', values: 'values', result: 'result' }
@@ -382,9 +382,7 @@ function generateValue(viewWidth) {
 }
 
 function createColorValueBox(label, value) {
-  return style(` ${label}:${value} `, {
-    border: state.selectedMode === label ? Border.DOUBLE : Border.ROUNDED
-  }).split('\n')
+  return (addCustomeBorder(` ${label}:${value} `, state.selectedMode === label ? BORDER_CHARS.double : BORDER_CHARS.rounded)).split('\n')
 }
 
 
@@ -398,7 +396,7 @@ function generateResultsView() {
   const hexBox = createColorValueBox(SELECTED_MODE.hex, hexValue)
   const hslBox = createColorValueBox(SELECTED_MODE.hsl, `${Math.round(hslValue.h * 360)},${Math.round(hslValue.s * 100)},${Math.round(hslValue.l * 100)}`)
 
-  const totalBoxWidth = hsvBox[0].length + rgbBox[0].length + hexBox[0].length + hslBox[0].length
+  const totalBoxWidth = stripStyle(hsvBox[0]).length + stripStyle(rgbBox[0]).length + stripStyle(hexBox[0]).length + stripStyle(hslBox[0]).length
 
   const displayLines = []
   for (let i = 0; i < 3; i++) {
@@ -407,9 +405,8 @@ function generateResultsView() {
       ' ' + ansi.style.reset
     displayLines.push(` ${rgbBox[i]} ${hsvBox[i]} ${hexBox[i]} ${hslBox[i]} ${colorBar}`)
   }
-  return (style(displayLines.join('\n'), {
-    border: state.currentFocus === SELECTED_SECTION.result ? Border.DOUBLE : Border.ROUNDED,
-  }))
+
+  return addCustomeBorder(displayLines.join('\n'), state.currentFocus === SELECTED_SECTION.result ? BORDER_CHARS.double : BORDER_CHARS.rounded)
 }
 
 
@@ -420,7 +417,7 @@ function displayColorSections() {
   const saturationLines = saturationOutput.join('').split('\n')
   const valueLines = valueOutput.join('').split('\n')
 
-  const combinedWidth = saturationLines[0].length + valueLines[0].length
+  const combinedWidth = stripStyle(saturationLines[0]).length + stripStyle(valueLines[0]).length
   const padding = combinedWidth < terminalWidth
     ? ' '.repeat(parseInt((terminalWidth - combinedWidth) / 2))
     : ''

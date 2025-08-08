@@ -33,7 +33,7 @@ export const getWindowSize = () =>
   windowSize ?? (windowSize = OS.ttyGetWinSize());
 const [width, _] = getWindowSize();
 
-export function addBorder(string) {
+export function addRoundedBorder(string) {
   const horizontalBorder = "─".repeat(width - 3);
 
   const leftPadding = " ".repeat(Math.floor((width - 3 - string.length) / 2));
@@ -174,3 +174,44 @@ export const setCommonFzfArgs = (fzfArgs) => {
   (USER_ARGUMENTS?.fzfArgs ?? [])
     .forEach((userDefinedFzfArg) => fzfArgs.custom(userDefinedFzfArg));
 };
+
+export function stripStyle(str) {
+  const ansiRegex = /[\u001b\u009b][[()#;?]*.{0,2}(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+  return str.replace(ansiRegex, '');
+};
+
+export const addCustomeBorder = function(str, chars, padding = 0) {
+  if (!chars) {
+    return str;
+  }
+
+  const lines = str.split('\n');
+  const horizontalPadding = ' '.repeat(padding);
+
+  const contentWidth = Math.max(
+    0,
+    ...lines.map(line => stripStyle(line).length)
+  );
+
+  if (contentWidth === 0 && lines.length === 1 && lines[0] === '') {
+    return `${chars.tl}${chars.tr}\n${chars.bl}${chars.br}`;
+  }
+
+  const totalInnerWidth = contentWidth + padding * 2;
+
+  const topBorder = chars.tl + chars.x.repeat(totalInnerWidth) + chars.tr;
+  const bottomBorder = chars.bl + chars.x.repeat(totalInnerWidth) + chars.br;
+
+  const middleContent = lines.map(line => {
+    const strippedLength = stripStyle(line).length;
+
+    const rightPaddingCount = totalInnerWidth - strippedLength - padding;
+    const rightPadding = ' '.repeat(rightPaddingCount > 0 ? rightPaddingCount : 0);
+
+    return `${chars.y}${horizontalPadding}${line}${rightPadding}${chars.y}`;
+  }).join('\n');
+
+  return `${topBorder}\n${middleContent}\n${bottomBorder}`;
+}
+
+

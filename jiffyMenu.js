@@ -2,7 +2,7 @@ import { ProcessSync } from "../qjs-ext-lib/src/process.js";
 import Fzf from "../justjs/fzf.js";
 import { modes } from "./main.js";
 import {
-  addBorder,
+  addRoundedBorder,
   alignCenter,
   handleFzfExec,
   setCommonFzfArgs,
@@ -27,7 +27,7 @@ export default async function JiffyMenu() {
 
   const fzfInput = modes.map((mode, i) => i !== 3 ? mode[0] : null).filter(
     Boolean,
-  ).map((choice) => addBorder(choice)).join("\0");
+  ).map((choice) => addRoundedBorder(choice)).join("\0");
 
   const JiffyMenu = new ProcessSync(
     fzfArgs.toArray(),
