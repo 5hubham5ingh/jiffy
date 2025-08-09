@@ -26,10 +26,10 @@ export default async function Emojis() {
     .bind(
       `"enter:execute-silent(echo {} | head -n 1 | cut -d ' ' -f 1 | ${USER_ARGUMENTS.clipboard})+abort"`,
     )
-    .bind(
-      `'focus:execute-silent(kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --scale-up --place=${iconPlacement}` +
-      ` $(echo {} | tail -n 1 | cut -d" " -f1) >>/dev/tty && echo {} | head -n 2 | tail -n 1)'`
-    )
+  // .bind(
+  //   `'focus:execute-silent(kitty icat --clear --transfer-mode=memory --unicode-placeholder --stdin=no --scale-up --place=${iconPlacement}` +
+  //   ` $(echo {} | tail -n 1 | cut -d" " -f1) >>/dev/tty && echo {} | head -n 2 | tail -n 1)'`
+  // )
 
   setCommonFzfArgs(fzfArgs);
 
