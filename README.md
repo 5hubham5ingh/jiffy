@@ -22,7 +22,8 @@
 <br>
 
 **Color picker**
-<img height="636" alt="2025-08-03-235626_hyprshot" src="https://github.com/user-attachments/assets/40cb4423-a6b8-4022-b222-d921568c3757" />
+![output](https://github.com/user-attachments/assets/0d047d6a-f713-4246-b801-2ce513206e87)
+
 
 ## Dependencies
 - **fzf** for fuzzy search.
