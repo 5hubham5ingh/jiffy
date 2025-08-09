@@ -22,7 +22,7 @@ const state = {
     s: 50,
     v: 50
   },
-  showKeybinds: true
+  showKeybinds: false
 }
 
 const getColoredBorderChar = (char) => {
@@ -52,7 +52,8 @@ const BORDER_CHARS = {
 };
 
 
-const [terminalWidth, _terminalHeight] = ttyGetWinSize()
+const [actualTerminalWidth, terminalHeight] = ttyGetWinSize()
+const terminalWidth = actualTerminalWidth - 2
 
 export async function colorPicker() {
   const focusNextSection = () => {
@@ -126,13 +127,8 @@ export async function colorPicker() {
   }
 
   const toggleKeybindView = () => {
-    if (state.showKeybinds) {
-      showKeybinds()
-    } else {
-      printf(clearTerminal)
-      renderUI()
-    }
     state.showKeybinds = !state.showKeybinds
+    renderUI()
   }
 
   const chooseSelected = async (_, quit) => {
@@ -198,20 +194,58 @@ export async function colorPicker() {
   }
 }
 
-// TODO: 1: fix result preview when terminalWidth > displayColorSections width.
-//       2: Colour border according to the selected colour
+function printLineWithYBorder(line) {
+  if (!line.trim()) return; // trim() checks for spaces and avoids replace twice
+  const cleanLine = line.replace('\n', '');
+  const leftBorderedLine = BORDER_CHARS.rounded.y + cleanLine;
+  const contentLength = stripStyle(leftBorderedLine).length;
+  const padLength = Math.max(0, actualTerminalWidth - 1 - contentLength);
+  print(leftBorderedLine + " ".repeat(padLength) + BORDER_CHARS.rounded.y);
+}
+
 function renderUI() {
-  printf(cursorTo(0, 0))
-  // const topBorder = BORDER_CHARS.rounded.tl + BORDER_CHARS.rounded.x.repeat(terminalWidth - 2) + BORDER_CHARS.rounded.tr
-  // printf(topBorder)
-  generateHues().forEach(printf)
-  displayColorSections().forEach(printf)
-  printf(ansi.cursor.back(terminalWidth))
-  printf(generateResultsView())
+  printf(cursorTo(0, 0));
+
+  // Borders
+  const { rounded: R } = BORDER_CHARS;
+  const topBorder = R.tl + R.x.repeat(terminalWidth) + R.tr;
+  const bottomBorder = R.bl + R.x.repeat(terminalWidth) + R.br;
+
+  // Sections
+  const huesSection = generateHues();
+  const colorSection = displayColorSections();
+  const resultSection = generateResultsView();
+  const keybindSection = generateKeybindView();
+
+  // Padding calculation
+  const totalContentHeight = huesSection.length + colorSection.length + resultSection.length + keybindSection.length;
+  const verticalTopPadding = Math.max(0, ((terminalHeight - totalContentHeight) >> 1) - 1);
+  const verticalBottomPadding = terminalHeight - (verticalTopPadding + totalContentHeight) - 1;
+
+  // Precomputed empty line with vertical borders
+  const emptyBorderedLine = R.y + " ".repeat(terminalWidth) + R.y + "\n";
+
+  // Render
+  printf(topBorder);
+  printf(emptyBorderedLine.repeat(verticalTopPadding));
+
+  huesSection.forEach(printLineWithYBorder);
+  colorSection.forEach(printLineWithYBorder);
+
+  printf(ansi.cursor.back(terminalWidth));
+  resultSection.forEach(printLineWithYBorder);
+
+  keybindSection
+    // .forEach(l => printf('\n') && printLineWithYBorder(l))
+    .forEach(printLineWithYBorder)
+
+  if (verticalBottomPadding > 0) printf(emptyBorderedLine.repeat(verticalBottomPadding));
+  printf(bottomBorder);
 }
 
 
-const showKeybinds = () => {
+const generateKeybindView = () => {
+  if (!state.showKeybinds) return [];
   const keyDescriptions = [
     "j / ↓ │ Focus next section",
     "k / ↑ │ Focus previous section",
@@ -229,29 +263,35 @@ const showKeybinds = () => {
     "q │ Quit"
   ]
 
-  const { [0]: terminalWidth } = ttyGetWinSize()
   const view = []
   let currentLine = []
 
   const renderCurrentLine = () => {
+
+    const { r, g, b } = hsvToRgb(state.selectedColor.h, state.selectedColor.s, state.selectedColor.v)
+    const hexColor = rgbToHex(r, g, b)
     const styledChunks = currentLine.map(item =>
-      ` ${ansi.bgHex('#b3b3b3')}${ansi.hex('#000000')}${ansi.style.bold} ${item} ${ansi.style.reset} `
+      ` ${ansi.bgHex(`#${hexColor}`)}${ansi.hex('#000000')}${ansi.style.bold} ${item} ${ansi.style.reset} `
     )
     const lineStr = styledChunks.join('')
     const visibleLength = lineStr.replace(/\x1b\[[0-9;]*m/g, '').length
-    const padding = " ".repeat(Math.max(0, Math.floor((terminalWidth - visibleLength) / 2)))
-    view.push(padding + lineStr + '\n')
+    const padding = " ".repeat(Math.max(0, Math.floor((terminalWidth - 2 - visibleLength) / 2)))
+    const line = padding + lineStr + padding
+    const blankLine = " ".repeat(line.replace(/\x1b\[[0-9;]*m/g, '').length)
+    view.push(blankLine, line)
     currentLine = []
   }
 
+  const { r, g, b } = hsvToRgb(state.selectedColor.h, state.selectedColor.s, state.selectedColor.v)
+  const hexColor = rgbToHex(r, g, b)
   for (const keyBind of keyDescriptions) {
     const testLine = [...currentLine, keyBind]
     const testStyled = testLine.map(item =>
-      ` ${ansi.bgHex('#b3b3b3')}${ansi.hex('#000000')}${ansi.style.bold} ${item} ${ansi.style.reset} `
+      ` ${ansi.bgHex(`#${hexColor}`)}${ansi.hex('#000000')}${ansi.style.bold} ${item} ${ansi.style.reset} `
     ).join('')
     const testVisibleLength = testStyled.replace(/\x1b\[[0-9;]*m/g, '').length
 
-    if (testVisibleLength > terminalWidth && currentLine.length > 0) {
+    if (testVisibleLength > terminalWidth - 2 && currentLine.length > 0) {
       renderCurrentLine()
     }
 
@@ -260,10 +300,10 @@ const showKeybinds = () => {
 
   if (currentLine.length > 0) renderCurrentLine()
 
-  print("\n")
-  view.forEach(l => print(l))
-  print("\n")
+  view.shift()
+  return addCustomeBorder(view.join('\n'), BORDER_CHARS.rounded).split('\n');
 }
+
 function createBorderLine(borderChar, length) {
   return borderChar.x.repeat(length)
 }
@@ -318,7 +358,7 @@ function generateHues() {
 
 
   const padding = addCenterPadding(topBorder, terminalWidth)
-  return output.map(l => padding + l)
+  return output.map(l => padding + l + padding)
   for (const line of output) {
     printf(padding + line)
   }
@@ -406,7 +446,10 @@ function generateResultsView() {
     displayLines.push(` ${rgbBox[i]} ${hsvBox[i]} ${hexBox[i]} ${hslBox[i]} ${colorBar}`)
   }
 
-  return addCustomeBorder(displayLines.join('\n'), state.currentFocus === SELECTED_SECTION.result ? BORDER_CHARS.double : BORDER_CHARS.rounded)
+  return addCustomeBorder(
+    displayLines.join('\n'),
+    state.currentFocus === SELECTED_SECTION.result ? BORDER_CHARS.double : BORDER_CHARS.rounded
+  ).split('\n')
 }
 
 
