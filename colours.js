@@ -5,7 +5,7 @@ import { ttyGetWinSize } from "../qjs-ext-lib/src/os.js"
 import { handleKeysPress, keySequences } from "../justjs/terminal.js"
 import { clearTerminal, cursorHide, cursorShow, cursorTo } from "../justjs/cursor.js"
 import { app, predefinedMenuItem } from "./main.js"
-import { ProcessSync } from "../qjs-ext-lib/src/process.js"
+import { Process, ProcessSync } from "../qjs-ext-lib/src/process.js"
 import { addCustomeBorder, stripStyle } from "./utils.js"
 
 const SELECTED_MODE = { rgb: 'rgb', hsv: 'hsv', hex: 'hex', hsl: 'hsl' }
@@ -131,7 +131,7 @@ export async function colorPicker() {
     renderUI()
   }
 
-  const chooseSelected = async (_, quit) => {
+  const chooseSelected = (_, quit) => {
     const { h, s, v } = state.selectedColor
     let result;
     switch (state.selectedMode) {
@@ -155,11 +155,12 @@ export async function colorPicker() {
       }
     }
 
-    const clipboard = new ProcessSync(USER_ARGUMENTS.clipboard, {
-      input: result
+    execAsync(USER_ARGUMENTS.clipboard, {
+      input: result,
+      newSession: true
     })
-    clipboard.run()
-    quit()
+    print(ansi.style.reset, cursorShow, clearTerminal)
+    STD.exit(0)
   }
 
   print(cursorHide, clearTerminal)
