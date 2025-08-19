@@ -255,7 +255,7 @@ const generateKeybindView = () => {
     "2 │ Focus saturation section",
     "3 │ Focus value section",
     "4 │ Focus result section",
-    "H │ Increment hue manually",
+    "H │ Increment manually",
     "S │ Increment saturation",
     "V │ Increment value",
     "R │ Cycle result mode (RGB/HEX)",
