@@ -359,9 +359,6 @@ function generateHues() {
 
   const padding = addCenterPadding(topBorder, terminalWidth)
   return output.map(l => padding + l + padding)
-  for (const line of output) {
-    printf(padding + line)
-  }
 }
 
 function generateColorRange(type, viewWidth) {
