@@ -169,6 +169,7 @@ export const setCommonFzfArgs = (fzfArgs) => {
   fzfArgs.border("rounded").color("bg+:-1,border:cyan").layout("reverse").bind(
     "'shift-tab:become(echo change-preset###${FZF_QUERY})'",
   )
+    .withShell("'/usr/bin/bash -c'")
     .separator("═").bind("'tab:become(echo change-mode###${FZF_QUERY})'");
 
   (USER_ARGUMENTS?.fzfArgs ?? [])
@@ -176,24 +177,25 @@ export const setCommonFzfArgs = (fzfArgs) => {
 };
 
 export function stripStyle(str) {
-  const ansiRegex = /[\u001b\u009b][[()#;?]*.{0,2}(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
-  return str.replace(ansiRegex, '');
-};
+  const ansiRegex =
+    /[\u001b\u009b][[()#;?]*.{0,2}(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+  return str.replace(ansiRegex, "");
+}
 
-export const addCustomeBorder = function(str, chars, padding = 0) {
+export const addCustomeBorder = function (str, chars, padding = 0) {
   if (!chars) {
     return str;
   }
 
-  const lines = str.split('\n');
-  const horizontalPadding = ' '.repeat(padding);
+  const lines = str.split("\n");
+  const horizontalPadding = " ".repeat(padding);
 
   const contentWidth = Math.max(
     0,
-    ...lines.map(line => stripStyle(line).length)
+    ...lines.map((line) => stripStyle(line).length),
   );
 
-  if (contentWidth === 0 && lines.length === 1 && lines[0] === '') {
+  if (contentWidth === 0 && lines.length === 1 && lines[0] === "") {
     return `${chars.tl}${chars.tr}\n${chars.bl}${chars.br}`;
   }
 
@@ -202,16 +204,16 @@ export const addCustomeBorder = function(str, chars, padding = 0) {
   const topBorder = chars.tl + chars.x.repeat(totalInnerWidth) + chars.tr;
   const bottomBorder = chars.bl + chars.x.repeat(totalInnerWidth) + chars.br;
 
-  const middleContent = lines.map(line => {
+  const middleContent = lines.map((line) => {
     const strippedLength = stripStyle(line).length;
 
     const rightPaddingCount = totalInnerWidth - strippedLength - padding;
-    const rightPadding = ' '.repeat(rightPaddingCount > 0 ? rightPaddingCount : 0);
+    const rightPadding = " ".repeat(
+      rightPaddingCount > 0 ? rightPaddingCount : 0,
+    );
 
     return `${chars.y}${horizontalPadding}${line}${rightPadding}${chars.y}`;
-  }).join('\n');
+  }).join("\n");
 
   return `${topBorder}\n${middleContent}\n${bottomBorder}`;
-}
-
-
+};
